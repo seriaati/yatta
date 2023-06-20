@@ -1,9 +1,25 @@
+from enum import Enum
 from typing import Any, Dict, Final, List
 
 import aiohttp
 
-from enums import Language
 from models.character import Character
+
+
+class Language(Enum):
+    CHT = "cht"
+    CHS = "chs"
+    DE = "de"
+    EN = "en"
+    ES = "es"
+    FR = "fr"
+    ID = "id"
+    JP = "jp"
+    KR = "kr"
+    PT = "pt"
+    RU = "ru"
+    TH = "th"
+    VI = "vi"
 
 
 class YattaAPI:
