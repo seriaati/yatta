@@ -1,3 +1,3 @@
 # yatta
- Python async API wrapper for hsr.yatta.top
+ Python async API wrapper for hsr.yatta.top  
  For personal usage only.
