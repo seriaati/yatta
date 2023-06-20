@@ -3,7 +3,7 @@ from typing import Any, Dict, Final, List
 
 import aiohttp
 
-from models.character import Character
+from .models.character import Character
 
 
 class Language(Enum):
