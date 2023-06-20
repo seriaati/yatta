@@ -87,4 +87,4 @@ class YattaAPI:
             A list of character ids.
         """
         data = await self._request("avatar")
-        return [c["id"] for c in data["data"]["items"]]
+        return [int(c) for c in data["data"]["items"]]
