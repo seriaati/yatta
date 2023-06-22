@@ -8,7 +8,7 @@ from .models.character import Character
 
 class Language(Enum):
     CHT = "cht"
-    CHS = "chs"
+    CN = "cn"
     DE = "de"
     EN = "en"
     ES = "es"
