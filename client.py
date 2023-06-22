@@ -124,7 +124,7 @@ class YattaAPI:
         List[LightCone]
             A list of LightCone objects.
         """
-        data = await self._request("lightcone")
+        data = await self._request("equipment")
         light_cones = [LightCone(**lc) for lc in data["data"]["items"]]
         return light_cones
 
