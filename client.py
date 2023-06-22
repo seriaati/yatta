@@ -3,7 +3,7 @@ from typing import Any, Dict, Final, List
 
 import aiohttp
 
-from .models.character import Character
+from .models import Book, Character, Item, LightCone, Message, Relic
 
 
 class Language(Enum):
@@ -64,6 +64,19 @@ class YattaAPI:
             ) as resp:
                 return await resp.json()
 
+    async def fetch_books(self) -> List[Book]:
+        """
+        Fetch all books from the API.
+
+        Returns
+        -------
+        List[Book]
+            A list of Book objects.
+        """
+        data = await self._request("book")
+        books = [Book(**b) for b in data["data"]["items"]]
+        return books
+
     async def fetch_characters(self) -> List[Character]:
         """
         Fetch all characters from the API.
@@ -88,3 +101,67 @@ class YattaAPI:
         """
         data = await self._request("avatar")
         return [int(c) for c in data["data"]["items"]]
+
+    async def fetch_items(self) -> List[Item]:
+        """
+        Fetch all items from the API.
+
+        Returns
+        -------
+        List[Item]
+            A list of Item objects.
+        """
+        data = await self._request("item")
+        items = [Item(**i) for i in data["data"]["items"]]
+        return items
+
+    async def fetch_light_cones(self) -> List[LightCone]:
+        """
+        Fetch all light cones from the API.
+
+        Returns
+        -------
+        List[LightCone]
+            A list of LightCone objects.
+        """
+        data = await self._request("lightcone")
+        light_cones = [LightCone(**lc) for lc in data["data"]["items"]]
+        return light_cones
+
+    async def fetch_messages(self) -> List[Message]:
+        """
+        Fetch all messages from the API.
+
+        Returns
+        -------
+        List[Message]
+            A list of Message objects.
+        """
+        data = await self._request("message")
+        messages = [Message(**m) for m in data["data"]["items"]]
+        return messages
+
+    async def fetch_message_types(self) -> Dict[str, str]:
+        """
+        Fetch all message types from the API.
+
+        Returns
+        -------
+        List[str]
+            A list of message types.
+        """
+        data = await self._request("message")
+        return data["data"]["types"]
+
+    async def fetch_relics(self) -> List[Relic]:
+        """
+        Fetch all relics from the API.
+
+        Returns
+        -------
+        List[Relic]
+            A list of Relic objects.
+        """
+        data = await self._request("relic")
+        relics = [Relic(**r) for r in data["data"]["items"]]
+        return relics
