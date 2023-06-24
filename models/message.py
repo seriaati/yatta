@@ -1,9 +1,11 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field, validator
 
 
 class Contact(BaseModel):
     name: str
-    signature: str
+    signature: Optional[str] = Field(None)
     type: int
     icon: str
 
