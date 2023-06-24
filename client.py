@@ -74,7 +74,7 @@ class YattaAPI:
             A list of Book objects.
         """
         data = await self._request("book")
-        books = [Book(**b) for b in data["data"]["items"]]
+        books = [Book(**b) for b in data["data"]["items"].values()]
         return books
 
     async def fetch_characters(self) -> List[Character]:
@@ -87,20 +87,8 @@ class YattaAPI:
             A list of Character objects.
         """
         data = await self._request("avatar")
-        characters = [Character(**c) for c in data["data"]["items"]]
+        characters = [Character(**c) for c in data["data"]["items"].values()]
         return characters
-
-    async def fetch_character_ids(self) -> List[int]:
-        """
-        Fetch all character ids from the API.
-
-        Returns
-        -------
-        List[int]
-            A list of character ids.
-        """
-        data = await self._request("avatar")
-        return [int(c) for c in data["data"]["items"]]
 
     async def fetch_items(self) -> List[Item]:
         """
@@ -112,7 +100,7 @@ class YattaAPI:
             A list of Item objects.
         """
         data = await self._request("item")
-        items = [Item(**i) for i in data["data"]["items"]]
+        items = [Item(**i) for i in data["data"]["items"].values()]
         return items
 
     async def fetch_light_cones(self) -> List[LightCone]:
@@ -125,7 +113,7 @@ class YattaAPI:
             A list of LightCone objects.
         """
         data = await self._request("equipment")
-        light_cones = [LightCone(**lc) for lc in data["data"]["items"]]
+        light_cones = [LightCone(**lc) for lc in data["data"]["items"].values()]
         return light_cones
 
     async def fetch_messages(self) -> List[Message]:
@@ -138,7 +126,7 @@ class YattaAPI:
             A list of Message objects.
         """
         data = await self._request("message")
-        messages = [Message(**m) for m in data["data"]["items"]]
+        messages = [Message(**m) for m in data["data"]["items"].values()]
         return messages
 
     async def fetch_message_types(self) -> Dict[str, str]:
@@ -163,5 +151,5 @@ class YattaAPI:
             A list of Relic objects.
         """
         data = await self._request("relic")
-        relics = [Relic(**r) for r in data["data"]["items"]]
+        relics = [Relic(**r) for r in data["data"]["items"].values()]
         return relics
