@@ -13,6 +13,9 @@ logging.basicConfig(
 async def main():
     yatta = YattaAPI()
 
+    change_logs = await yatta.fetch_change_logs()
+    logging.info(f"Fetched {len(change_logs)} change logs.")
+
     books = await yatta.fetch_books()
     logging.info(f"Fetched {len(books)} books.")
     for book in books:

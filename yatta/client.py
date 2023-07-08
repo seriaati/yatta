@@ -7,6 +7,7 @@ import aiohttp
 from .models import (
     Book,
     BookDetail,
+    ChangeLog,
     Character,
     CharacterDetail,
     Item,
@@ -57,7 +58,7 @@ class YattaAPI:
     def __init__(self, lang: Language = Language.EN):
         self.lang = lang
 
-    async def _request(self, endpoint: str) -> Dict[str, Any]:
+    async def _request(self, endpoint: str, *, static: bool = False) -> Dict[str, Any]:
         """
         A helper function to make requests to the API.
 
@@ -65,16 +66,21 @@ class YattaAPI:
         ----------
         endpoint: :class:`str`
             The endpoint to request from.
+        static: :class:`bool`
+            Whether to use the static endpoint or not. Defaults to ``False``.
 
         Returns
         -------
         Dict[str, Any]
             The response from the API.
         """
+        if static:
+            url = f"{self.BASE_URL}/static/{endpoint}"
+        else:
+            url = f"{self.BASE_URL}/{self.lang.value}/{endpoint}"
+        logging.debug(f"Requesting {url}...")
         async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"{self.BASE_URL}/{self.lang.value}/{endpoint}"
-            ) as resp:
+            async with session.get(url) as resp:
                 return await resp.json()
 
     async def fetch_books(self) -> List[Book]:
@@ -257,3 +263,18 @@ class YattaAPI:
         data = await self._request(f"relic/{id}")
         relic = RelicSetDetail(**data["data"])
         return relic
+
+    async def fetch_change_logs(self) -> List[ChangeLog]:
+        """
+        Fetch change logs from the API.
+
+        Returns
+        -------
+        List[ChangeLog]
+            A list of ChangeLog objects.
+        """
+        data = await self._request("changelog", static=True)
+        change_logs: List[ChangeLog] = []
+        for id, log in data["data"].items():
+            change_logs.append(ChangeLog(id=int(id), **log))
+        return change_logs
