@@ -1,9 +1,22 @@
+import logging
 from enum import Enum
 from typing import Any, Dict, Final, List
 
 import aiohttp
 
-from .models import Book, Character, Item, LightCone, Message, Relic
+from .models import (
+    Book,
+    BookDetail,
+    Character,
+    CharacterDetail,
+    Item,
+    ItemDetail,
+    LightCone,
+    LightConeDetail,
+    Message,
+    RelicSet,
+    RelicSetDetail,
+)
 
 
 class Language(Enum):
@@ -77,6 +90,24 @@ class YattaAPI:
         books = [Book(**b) for b in data["data"]["items"].values()]
         return books
 
+    async def fetch_book_detail(self, id: int) -> BookDetail:
+        """
+        Fetch a book's detail from the API.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the book to fetch.
+
+        Returns
+        -------
+        BookDetail
+            A BookDetail object.
+        """
+        data = await self._request(f"book/{id}")
+        book = BookDetail(**data["data"])
+        return book
+
     async def fetch_characters(self) -> List[Character]:
         """
         Fetch all characters from the API.
@@ -89,6 +120,24 @@ class YattaAPI:
         data = await self._request("avatar")
         characters = [Character(**c) for c in data["data"]["items"].values()]
         return characters
+
+    async def fetch_character_detail(self, id: int) -> CharacterDetail:
+        """
+        Fetch a character's detail from the API.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the character to fetch.
+
+        Returns
+        -------
+        CharacterDetail
+            A CharacterDetail object.
+        """
+        data = await self._request(f"avatar/{id}")
+        character = CharacterDetail(**data["data"])
+        return character
 
     async def fetch_items(self) -> List[Item]:
         """
@@ -103,6 +152,24 @@ class YattaAPI:
         items = [Item(**i) for i in data["data"]["items"].values()]
         return items
 
+    async def fetch_item_detail(self, id: int) -> ItemDetail:
+        """
+        Fetch an item's detail from the API.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the item to fetch.
+
+        Returns
+        -------
+        ItemDetail
+            An ItemDetail object.
+        """
+        data = await self._request(f"item/{id}")
+        item = ItemDetail(**data["data"])
+        return item
+
     async def fetch_light_cones(self) -> List[LightCone]:
         """
         Fetch all light cones from the API.
@@ -115,6 +182,24 @@ class YattaAPI:
         data = await self._request("equipment")
         light_cones = [LightCone(**lc) for lc in data["data"]["items"].values()]
         return light_cones
+
+    async def fetch_light_cone_detail(self, id: int) -> LightConeDetail:
+        """
+        Fetch a light cone's detail from the API.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the light cone to fetch.
+
+        Returns
+        -------
+        LightConeDetail
+            A LightConeDetail object.
+        """
+        data = await self._request(f"equipment/{id}")
+        light_cone = LightConeDetail(**data["data"])
+        return light_cone
 
     async def fetch_messages(self) -> List[Message]:
         """
@@ -141,15 +226,34 @@ class YattaAPI:
         data = await self._request("message")
         return data["data"]["types"]
 
-    async def fetch_relics(self) -> List[Relic]:
+    async def fetch_relic_sets(self) -> List[RelicSet]:
         """
-        Fetch all relics from the API.
+        Fetch all relic sets from the API.
 
         Returns
         -------
-        List[Relic]
-            A list of Relic objects.
+        List[RelicSet]
+            A list of RelicSet objects.
         """
         data = await self._request("relic")
-        relics = [Relic(**r) for r in data["data"]["items"].values()]
+        relics = [RelicSet(**r) for r in data["data"]["items"].values()]
         return relics
+
+    async def fetch_relic_set_detail(self, id: int) -> RelicSetDetail:
+        """
+        Fetch a relic set's detail from the API.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the relic set to fetch.
+
+        Returns
+        -------
+        RelicSetDetail
+            A RelicSetDetail object.
+        """
+        logging.debug(f"Fetching relic set detail for ID {id}")
+        data = await self._request(f"relic/{id}")
+        relic = RelicSetDetail(**data["data"])
+        return relic
