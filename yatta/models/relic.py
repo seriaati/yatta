@@ -4,6 +4,12 @@ from pydantic import BaseModel, Field, field_validator
 
 from ..utils import remove_html_tags, replace_placeholders
 
+__all__ = (
+    "Relic",
+    "RelicSet",
+    "RelicSetDetail",
+)
+
 
 class Relic(BaseModel):
     pos: str

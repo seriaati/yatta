@@ -4,8 +4,18 @@ from pydantic import BaseModel, Field, field_validator
 
 from ..utils import remove_html_tags
 
+__all__ = (
+    "LightCone",
+    "LightConeDetail",
+    "LightConeSkill",
+    "LightConeUpgrade",
+    "LightConePathType",
+    "LightConeAscensionMaterial",
+    "LightConeCostItem",
+)
 
-class AcensionMaterial(BaseModel):
+
+class LightConeAscensionMaterial(BaseModel):
     id: int
     rarity: int
 
@@ -20,14 +30,14 @@ class LightConeSkill(BaseModel):
         return remove_html_tags(v)
 
 
-class CostItem(BaseModel):
+class LightConeCostItem(BaseModel):
     id: int
     amount: int
 
 
 class LightConeUpgrade(BaseModel):
     level: int
-    cost_items: List[CostItem] = Field(alias="costItems")
+    cost_items: List[LightConeCostItem] = Field(alias="LightConeCostItems")
     max_level: int = Field(alias="maxLevel")
     level_require: int = Field(alias="playerLevelRequire")
     world_level_require: int = Field(alias="worldLevelRequire")
@@ -43,15 +53,17 @@ class LightConeUpgrade(BaseModel):
         return v or 0
 
     @field_validator("cost_items", mode="before")
-    def _convert_cost_items(cls, v: Optional[Dict[str, int]]) -> List[CostItem]:
+    def _convert_cost_items(
+        cls, v: Optional[Dict[str, int]]
+    ) -> List[LightConeCostItem]:
         return (
-            [CostItem(id=int(id), amount=amount) for id, amount in v.items()]
+            [LightConeCostItem(id=int(id), amount=amount) for id, amount in v.items()]
             if v
             else []
         )
 
 
-class PathType(BaseModel):
+class LightConePathType(BaseModel):
     id: str
     name: str
 
@@ -61,18 +73,18 @@ class LightConeDetail(BaseModel):
     name: str
     beta: bool = Field(False)
     rarity: int = Field(alias="rank")
-    type: PathType = Field(alias="types")
+    type: LightConePathType = Field(alias="types")
     icon: str
     is_sellable: bool = Field(alias="isSellable")
     route: str
     description: str
     upgrades: List[LightConeUpgrade] = Field(alias="upgrade")
     skill: LightConeSkill
-    ascension_materials: List[AcensionMaterial] = Field(alias="ascension")
+    ascension_materials: List[LightConeAscensionMaterial] = Field(alias="ascension")
 
     @field_validator("type", mode="before")
-    def _convert_type(cls, v: Dict[str, Dict[str, Any]]) -> PathType:
-        return PathType(**v["pathType"])
+    def _convert_type(cls, v: Dict[str, Dict[str, Any]]) -> LightConePathType:
+        return LightConePathType(**v["LightConePathType"])
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -87,8 +99,13 @@ class LightConeDetail(BaseModel):
         return [LightConeUpgrade(**upgrade) for upgrade in v]
 
     @field_validator("ascension_materials", mode="before")
-    def _convert_ascension_materials(cls, v: Dict[str, int]) -> List[AcensionMaterial]:
-        return [AcensionMaterial(id=int(id), rarity=rarity) for id, rarity in v.items()]
+    def _convert_ascension_materials(
+        cls, v: Dict[str, int]
+    ) -> List[LightConeAscensionMaterial]:
+        return [
+            LightConeAscensionMaterial(id=int(id), rarity=rarity)
+            for id, rarity in v.items()
+        ]
 
 
 class LightCone(BaseModel):
@@ -107,4 +124,4 @@ class LightCone(BaseModel):
 
     @field_validator("type", mode="before")
     def _convert_type(cls, v: Dict[str, str]) -> str:
-        return v["pathType"]
+        return v["LightConePathType"]

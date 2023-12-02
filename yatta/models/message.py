@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+__all__ = ("Contact", "Message")
+
 
 class Contact(BaseModel):
     name: str

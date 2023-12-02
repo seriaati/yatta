@@ -4,6 +4,35 @@ from pydantic import BaseModel, Field, field_validator
 
 from ..utils import remove_html_tags, replace_placeholders
 
+__all__ = (
+    "Character",
+    "CharacterDetail",
+    "CharacterEidolon",
+    "CharacterScript",
+    "CharacterStory",
+    "CharacterTraces",
+    "CharacterUpgrade",
+    "CharacterVoice",
+    "SkillAdd",
+    "SkillListSkill",
+    "SkillPoint",
+    "SkillPromote",
+    "SkillPromoteCostItem",
+    "SkillTree",
+    "SkillTreeSkill",
+    "Status",
+    "WeaknessBreak",
+    "ExtraEffect",
+    "CharacterAscensionItem",
+    "BaseSkill",
+    "BaseStat",
+    "AddStat",
+    "CharacterCV",
+    "CharacterInfo",
+    "CharacterType",
+    "CharacterDetailTypes",
+)
+
 
 class CharacterStory(BaseModel):
     title: str
@@ -33,7 +62,7 @@ class CharacterScript(BaseModel):
         return [CharacterVoice(**s) for s in v] if v else []
 
 
-class AscensionItem(BaseModel):
+class CharacterAscensionItem(BaseModel):
     id: int
     amount: int
 
@@ -343,7 +372,7 @@ class CharacterDetail(BaseModel):
     upgrades: List[CharacterUpgrade] = Field(alias="upgrade")
     traces: CharacterTraces
     eidolons: List[CharacterEidolon]
-    ascension: List[AscensionItem]
+    ascension: List[CharacterAscensionItem]
     script: CharacterScript
 
     @field_validator("icon", mode="before")
@@ -355,8 +384,8 @@ class CharacterDetail(BaseModel):
         return [CharacterEidolon(**v[s]) for s in v]
 
     @field_validator("ascension", mode="before")
-    def _convert_ascension(cls, v: Dict[str, int]) -> List[AscensionItem]:
-        return [AscensionItem(id=int(k), amount=v) for k, v in v.items()]
+    def _convert_ascension(cls, v: Dict[str, int]) -> List[CharacterAscensionItem]:
+        return [CharacterAscensionItem(id=int(k), amount=v) for k, v in v.items()]
 
 
 class CharacterType(BaseModel):
