@@ -4,7 +4,21 @@ from typing import Any, Dict, Final, List
 
 import aiohttp
 
-from .models import *
+from .models import (
+    Book,
+    BookDetail,
+    Character,
+    CharacterDetail,
+    ChangeLog,
+    Item,
+    ItemDetail,
+    LightCone,
+    LightConeDetail,
+    Message,
+    RelicSet,
+    RelicSetDetail,
+)
+
 
 __all__ = ("YattaAPI", "Language")
 
