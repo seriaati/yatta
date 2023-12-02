@@ -89,7 +89,7 @@ class CharacterEidolon(BaseModel):
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: str, values) -> str:
-        params = values.get("params")
+        params = values.data.get("params")
         return replace_placeholders(remove_html_tags(v), params)
 
     @field_validator("skill_add_level_list", mode="before")
