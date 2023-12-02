@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from ..utils import remove_html_tags
 
@@ -11,7 +11,7 @@ class RecipeMaterial(BaseModel):
     icon: str
     amount: int = Field(alias="count")
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
@@ -22,21 +22,21 @@ class Recipe(BaseModel):
     materials: List[RecipeMaterial] = Field(alias="materialCost")
     special_materials: List[RecipeMaterial] = Field(alias="specialMaterialCost")
 
-    @validator("coin_cost", pre=True)
+    @field_validator("coin_cost", mode="before")
     def _convert_coin_cost(cls, v: Optional[int]) -> int:
         return v or 0
 
-    @validator("required_world_level", pre=True)
+    @field_validator("required_world_level", mode="before")
     def _convert_required_world_level(cls, v: Optional[int]) -> int:
         return v or 0
 
-    @validator("materials", pre=True)
+    @field_validator("materials", mode="before")
     def _convert_materials(
         cls, v: Optional[Dict[str, Dict[str, Any]]]
     ) -> List[RecipeMaterial]:
         return [RecipeMaterial(id=int(id), **m) for id, m in v.items()] if v else []
 
-    @validator("special_materials", pre=True)
+    @field_validator("special_materials", mode="before")
     def _convert_special_materials(
         cls, v: Optional[Dict[str, Dict[str, Any]]]
     ) -> List[RecipeMaterial]:
@@ -47,7 +47,7 @@ class ItemSource(BaseModel):
     description: str
     recipes: List[Recipe] = Field(alias="recipe")
 
-    @validator("recipes", pre=True)
+    @field_validator("recipes", mode="before")
     def _convert_recipes(cls, v: Optional[List[Dict[str, Any]]]) -> List[Recipe]:
         return [Recipe(**r) for r in v] if v else []
 
@@ -69,15 +69,15 @@ class ItemDetail(BaseModel):
     story: Optional[str]
     sources: List[ItemSource] = Field(alias="source")
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v):
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
-    @validator("story", pre=True)
+    @field_validator("story", mode="before")
     def _format_story(cls, v: Optional[str]) -> Optional[str]:
         return remove_html_tags(v) if v else None
 
-    @validator("sources", pre=True)
+    @field_validator("sources", mode="before")
     def _convert_sources(cls, v: List[Dict[str, Any]]) -> List[ItemSource]:
         return [ItemSource(**s) for s in v] if v else []
 
@@ -92,6 +92,6 @@ class Item(BaseModel):
     icon: str
     route: str
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v):
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class Contact(BaseModel):
@@ -9,7 +9,7 @@ class Contact(BaseModel):
     type: int
     icon: str
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def convert_icon(cls, v):
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
 

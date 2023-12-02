@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from ..utils import remove_html_tags, replace_placeholders
 
@@ -9,7 +9,7 @@ class CharacterStory(BaseModel):
     title: str
     text: str
 
-    @validator("text", pre=True)
+    @field_validator("text", mode="before")
     def _format_text(cls, v: str) -> str:
         return remove_html_tags(v)
 
@@ -24,11 +24,11 @@ class CharacterScript(BaseModel):
     story: List[CharacterStory]
     voice: List[CharacterVoice]
 
-    @validator("story", pre=True)
+    @field_validator("story", mode="before")
     def _convert_story(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterStory]:
         return [CharacterStory(**s) for s in v] if v else []
 
-    @validator("voice", pre=True)
+    @field_validator("voice", mode="before")
     def _convert_voice(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterVoice]:
         return [CharacterVoice(**s) for s in v] if v else []
 
@@ -58,18 +58,18 @@ class CharacterEidolon(BaseModel):
     """List of skills that increase their level because of this eidolon"""
     icon: str
 
-    @validator("description", pre=True)
-    def _format_description(cls, v: str, values: Dict[str, Any]) -> str:
+    @field_validator("description", mode="before")
+    def _format_description(cls, v: str, values) -> str:
         params = values.get("params")
         return replace_placeholders(remove_html_tags(v), params)
 
-    @validator("skill_add_level_list", pre=True)
+    @field_validator("skill_add_level_list", mode="before")
     def _convert_skill_add_level_list(
         cls, v: Optional[Dict[str, int]]
     ) -> List[SkillAdd]:
         return [SkillAdd(id=int(id), level=l) for id, l in v.items()] if v else []
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
 
@@ -83,7 +83,7 @@ class SkillPromote(BaseModel):
     level: int
     cost_items: List[SkillPromoteCostItem] = Field(alias="costItems")
 
-    @validator("cost_items", pre=True)
+    @field_validator("cost_items", mode="before")
     def _convert_cost_items(
         cls, v: Dict[str, Optional[Dict[str, int]]]
     ) -> List[SkillPromoteCostItem]:
@@ -102,7 +102,7 @@ class Status(BaseModel):
     value: Union[int, float]
     icon: str
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
 
@@ -144,39 +144,39 @@ class SkillListSkill(BaseModel):
 
     params: Optional[Dict[str, List[int]]]
 
-    @validator("skill_points", pre=True)
+    @field_validator("skill_points", mode="before")
     def _convert_skill_points(cls, v: Dict[str, Optional[int]]) -> List[SkillPoint]:
         return [SkillPoint(type=k, value=v) for k, v in v.items()]
 
-    @validator("weakness_break", pre=True)
+    @field_validator("weakness_break", mode="before")
     def _convert_weakness_break(
         cls, v: Optional[Dict[str, int]]
     ) -> List[WeaknessBreak]:
         return [WeaknessBreak(type=k, value=v) for k, v in v.items()] if v else []
 
-    @validator("description", pre=True)
+    @field_validator("description", mode="before")
     def _format_description(cls, v: str) -> str:
         return remove_html_tags(v)
 
-    @validator("simplified_description", pre=True)
+    @field_validator("simplified_description", mode="before")
     def _format_simplified_description(cls, v: Optional[str]) -> Optional[str]:
         return remove_html_tags(v) if v else None
 
-    @validator("traces", pre=True)
+    @field_validator("traces", mode="before")
     def _convert_traces(cls, v: Optional[List[int]]) -> List[int]:
         return v if v else []
 
-    @validator("eidolons", pre=True)
+    @field_validator("eidolons", mode="before")
     def _convert_eidolons(cls, v: Optional[List[int]]) -> List[int]:
         return v if v else []
 
-    @validator("extra_effects", pre=True)
+    @field_validator("extra_effects", mode="before")
     def _convert_extra_effects(
         cls, v: Optional[List[Dict[str, Any]]]
     ) -> List[ExtraEffect]:
         return [ExtraEffect(**e) for e in v] if v else []
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
 
@@ -201,21 +201,21 @@ class BaseSkill(BaseModel):
 
     promote: List[SkillPromote]
 
-    @validator("skill_list", pre=True)
+    @field_validator("skill_list", mode="before")
     def _convert_skill_list(
         cls, v: Optional[Dict[str, Dict[str, Any]]]
     ) -> List[SkillListSkill]:
         return [SkillListSkill(id=int(s), **v[s]) for s in v] if v else []
 
-    @validator("status_list", pre=True)
+    @field_validator("status_list", mode="before")
     def _convert_status_list(cls, v: Optional[List[Dict[str, Any]]]) -> List[Status]:
         return [Status(**s) for s in v] if v else []
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
 
-    @validator("promote", pre=True)
+    @field_validator("promote", mode="before")
     def _convert_promote(
         cls, v: Dict[str, Dict[str, Optional[Dict[str, int]]]]
     ) -> List[SkillPromote]:
@@ -227,7 +227,7 @@ class SkillTreeSkill(BaseModel):
     points_direction: Optional[str] = Field(alias="pointsDirection")
     points: List[int]
 
-    @validator("points", pre=True)
+    @field_validator("points", mode="before")
     def _convert_points(cls, v: Optional[List[int]]) -> List[int]:
         return v if v else []
 
@@ -237,7 +237,7 @@ class SkillTree(BaseModel):
     type: str
     tree: List[SkillTreeSkill] = Field([])
 
-    @validator("tree", pre=True)
+    @field_validator("tree", mode="before")
     def _convert_tree(cls, v: Dict[str, Dict[str, Any]]) -> List[SkillTreeSkill]:
         return [SkillTreeSkill(**v[s]) for s in v]
 
@@ -247,15 +247,15 @@ class CharacterTraces(BaseModel):
     sub_skills: List[BaseSkill] = Field(alias="subSkills")
     tree_skills: List[SkillTree] = Field(alias="skillsTree")
 
-    @validator("main_skills", pre=True)
+    @field_validator("main_skills", mode="before")
     def _convert_main_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[BaseSkill]:
         return [BaseSkill(**v[s]) for s in v]
 
-    @validator("sub_skills", pre=True)
+    @field_validator("sub_skills", mode="before")
     def _convert_sub_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[BaseSkill]:
         return [BaseSkill(**v[s]) for s in v]
 
-    @validator("tree_skills", pre=True)
+    @field_validator("tree_skills", mode="before")
     def _convert_tree_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[SkillTree]:
         return [SkillTree(**v[s]) for s in v]
 
@@ -284,23 +284,23 @@ class CharacterUpgrade(BaseModel):
     base_stats: List[BaseStat] = Field(alias="skillBase")
     add_stats: List[AddStat] = Field(alias="skillAdd")
 
-    @validator("cost_items", pre=True)
+    @field_validator("cost_items", mode="before")
     def _convert_cost_items(cls, v: Optional[Dict[str, int]]) -> List[UpgradeItem]:
         return [UpgradeItem(id=int(k), amount=v) for k, v in v.items()] if v else []
 
-    @validator("required_player_level", pre=True)
+    @field_validator("required_player_level", mode="before")
     def _convert_required_player_level(cls, v: Optional[int]) -> int:
         return v if v else 0
 
-    @validator("required_world_level", pre=True)
+    @field_validator("required_world_level", mode="before")
     def _convert_required_world_level(cls, v: Optional[int]) -> int:
         return v if v else 0
 
-    @validator("base_stats", pre=True)
+    @field_validator("base_stats", mode="before")
     def _convert_base_stats(cls, v: Dict[str, Union[int, float]]) -> List[BaseStat]:
         return [BaseStat(id=k, value=v) for k, v in v.items()]
 
-    @validator("add_stats", pre=True)
+    @field_validator("add_stats", mode="before")
     def _convert_add_stats(cls, v: Dict[str, Union[int, float]]) -> List[AddStat]:
         return [AddStat(id=k, value=v) for k, v in v.items()]
 
@@ -315,7 +315,7 @@ class CharacterInfo(BaseModel):
     description: str
     cv: List[CharacterCV]
 
-    @validator("cv", pre=True)
+    @field_validator("cv", mode="before")
     def _convert_cv(cls, v: Optional[Dict[str, str]]) -> List[CharacterCV]:
         return [CharacterCV(lang=k, name=v) for k, v in v.items()] if v else []
 
@@ -346,15 +346,15 @@ class CharacterDetail(BaseModel):
     ascension: List[AscensionItem]
     script: CharacterScript
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
 
-    @validator("eidolons", pre=True)
+    @field_validator("eidolons", mode="before")
     def _convert_eidolons(cls, v: Dict[str, Dict[str, Any]]) -> List[CharacterEidolon]:
         return [CharacterEidolon(**v[s]) for s in v]
 
-    @validator("ascension", pre=True)
+    @field_validator("ascension", mode="before")
     def _convert_ascension(cls, v: Dict[str, int]) -> List[AscensionItem]:
         return [AscensionItem(id=int(k), amount=v) for k, v in v.items()]
 
@@ -373,6 +373,6 @@ class Character(BaseModel):
     route: str
     beta: bool = Field(False)
 
-    @validator("icon", pre=True)
+    @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
