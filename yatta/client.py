@@ -6,7 +6,7 @@ from typing import Any, Dict, Final, List
 import aiohttp
 from diskcache import Cache
 
-from ..exceptions import DataNotFound
+from .exceptions import DataNotFound
 from .models import (
     Book,
     BookDetail,
