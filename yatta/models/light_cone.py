@@ -37,7 +37,7 @@ class LightConeCostItem(BaseModel):
 
 class LightConeUpgrade(BaseModel):
     level: int
-    cost_items: List[LightConeCostItem] = Field(alias="LightConeCostItems")
+    cost_items: List[LightConeCostItem] = Field(alias="costItems")
     max_level: int = Field(alias="maxLevel")
     level_require: int = Field(alias="playerLevelRequire")
     world_level_require: int = Field(alias="worldLevelRequire")
@@ -84,7 +84,7 @@ class LightConeDetail(BaseModel):
 
     @field_validator("type", mode="before")
     def _convert_type(cls, v: Dict[str, Dict[str, Any]]) -> LightConePathType:
-        return LightConePathType(**v["LightConePathType"])
+        return LightConePathType(**v["pathType"])
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -124,4 +124,4 @@ class LightCone(BaseModel):
 
     @field_validator("type", mode="before")
     def _convert_type(cls, v: Dict[str, str]) -> str:
-        return v["LightConePathType"]
+        return v["pathType"]
