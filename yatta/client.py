@@ -60,6 +60,7 @@ class YattaAPI:
 
     def __init__(self, lang: Language = Language.EN):
         self.lang = lang
+        self.session = aiohttp.ClientSession(headers={"User-Agent": "yatta.py"})
         self.cache = Cache(".cache/yatta")
 
     async def _request(self, endpoint: str, *, static: bool = False) -> Dict[str, Any]:
@@ -89,7 +90,12 @@ class YattaAPI:
 
         logging.debug(f"Requesting {url}...")
             await asyncio.to_thread(self.cache.set, url, data, expire=86400)
+    async def close(self) -> None:
+        """
+        Closes the client session and cache.
+        """
         await self.session.close()
+        self.cache.close()
 
     async def fetch_books(self) -> List[Book]:
         """
