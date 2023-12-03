@@ -47,14 +47,14 @@ class YattaAPI:
 
     Parameters
     ----------
-    lang: :class:`Language`
-        The language to use for the API. Defaults to ``Language.EN``.
+    lang : Language, optional
+        The language to use for the API. Defaults to Language.EN.
 
     Attributes
     ----------
-    BASE_URL: :class:`str`
+    BASE_URL : str
         The base URL for the API. This is used internally.
-    lang: :class:`Language`
+    lang : Language
         The language that is used for the API.
     """
 
@@ -79,17 +79,22 @@ class YattaAPI:
 
         Parameters
         ----------
-        endpoint: :class:`str`
+        endpoint : str
             The endpoint to request from.
-        static: :class:`bool`
-            Whether to use the static endpoint or not. Defaults to ``False``.
-        use_cache: :class:`bool`
+        static : bool, optional
+            Whether to use the static endpoint or not. Defaults to False.
+        use_cache : bool
             Whether to use the cache or not
 
         Returns
         -------
         Dict[str, Any]
             The response from the API.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         if static:
             url = f"{self.BASE_URL}/static/{endpoint}"
@@ -121,13 +126,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[Book]
             A list of Book objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("book", use_cache=use_cache)
         books = [Book(**b) for b in data["data"]["items"].values()]
@@ -139,15 +149,20 @@ class YattaAPI:
 
         Parameters
         ----------
-        id: :class:`int`
+        id : int
             The ID of the book to fetch.
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         BookDetail
             A BookDetail object.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request(f"book/{id}", use_cache=use_cache)
         book = BookDetail(**data["data"])
@@ -159,13 +174,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[Character]
             A list of Character objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("avatar", use_cache=use_cache)
         characters = [Character(**c) for c in data["data"]["items"].values()]
@@ -179,15 +199,20 @@ class YattaAPI:
 
         Parameters
         ----------
-        id: :class:`int`
+        id : int
             The ID of the character to fetch.
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         CharacterDetail
             A CharacterDetail object.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request(f"avatar/{id}", use_cache=use_cache)
         character = CharacterDetail(**data["data"])
@@ -199,13 +224,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[Item]
             A list of Item objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("item", use_cache=use_cache)
         items = [Item(**i) for i in data["data"]["items"].values()]
@@ -217,15 +247,20 @@ class YattaAPI:
 
         Parameters
         ----------
-        id: :class:`int`
+        id : int
             The ID of the item to fetch.
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         ItemDetail
             An ItemDetail object.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request(f"item/{id}", use_cache=use_cache)
         item = ItemDetail(**data["data"])
@@ -237,13 +272,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[LightCone]
             A list of LightCone objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("equipment", use_cache=use_cache)
         light_cones = [LightCone(**lc) for lc in data["data"]["items"].values()]
@@ -257,15 +297,20 @@ class YattaAPI:
 
         Parameters
         ----------
-        id: :class:`int`
+        id : int
             The ID of the light cone to fetch.
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         LightConeDetail
             A LightConeDetail object.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request(f"equipment/{id}", use_cache=use_cache)
         light_cone = LightConeDetail(**data["data"])
@@ -277,13 +322,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[Message]
             A list of Message objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("message", use_cache=use_cache)
         messages = [Message(**m) for m in data["data"]["items"].values()]
@@ -295,13 +345,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[str]
             A list of message types.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("message", use_cache=use_cache)
         return data["data"]["types"]
@@ -312,13 +367,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[RelicSet]
             A list of RelicSet objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("relic", use_cache=use_cache)
         relics = [RelicSet(**r) for r in data["data"]["items"].values()]
@@ -332,15 +392,20 @@ class YattaAPI:
 
         Parameters
         ----------
-        id: :class:`int`
+        id : int
             The ID of the relic set to fetch.
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         RelicSetDetail
             A RelicSetDetail object.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         logging.debug(f"Fetching relic set detail for ID {id}")
         data = await self._request(f"relic/{id}", use_cache=use_cache)
@@ -353,13 +418,18 @@ class YattaAPI:
 
         Parameters
         ----------
-        use_cache: :class:`bool`, optional
-            Whether to use the cache or not. Defaults to ``True``.
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
 
         Returns
         -------
         List[ChangeLog]
             A list of ChangeLog objects.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
         """
         data = await self._request("changelog", static=True, use_cache=use_cache)
         change_logs: List[ChangeLog] = []
