@@ -96,7 +96,9 @@ class CharacterEidolon(BaseModel):
     def _convert_skill_add_level_list(
         cls, v: Optional[Dict[str, int]]
     ) -> List[SkillAdd]:
-        return [SkillAdd(id=int(id), level=l) for id, l in v.items()] if v else []
+        return (
+            [SkillAdd(id=int(id), level=level) for id, level in v.items()] if v else []
+        )
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
