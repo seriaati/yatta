@@ -68,19 +68,23 @@ async def test_light_cones(api_client: yatta.YattaAPI, _fetch_ids: List[List[int
 
 
 @pytest.mark.asyncio
-async def test_relics(api_client: yatta.YattaAPI, _fetch_ids: List[List[int]]):
+async def test_relic_sets(api_client: yatta.YattaAPI, _fetch_ids: List[List[int]]):
     relic_ids = _fetch_ids[4]
     for relic_id in relic_ids:
         await api_client.fetch_relic_set_detail(relic_id)
 
 
 @pytest.mark.asyncio
-async def test_messages():
-    client = yatta.YattaAPI()
-    await client.fetch_messages()
+async def test_messages(api_client: yatta.YattaAPI):
+    await api_client.fetch_messages()
 
 
 @pytest.mark.asyncio
-async def test_change_log():
-    client = yatta.YattaAPI()
-    await client.fetch_change_logs()
+async def test_change_log(api_client: yatta.YattaAPI):
+    await api_client.fetch_change_logs()
+
+
+@pytest.mark.asyncio
+async def test_invalid_id(api_client: yatta.YattaAPI):
+    with pytest.raises(yatta.DataNotFound):
+        await api_client.fetch_character_detail(0)
