@@ -4,6 +4,7 @@ from typing import Any, Dict, Final, List
 
 import aiohttp
 
+from ..exceptions import DataNotFound
 from .models import (
     Book,
     BookDetail,
@@ -89,7 +90,12 @@ class YattaAPI:
             return cache  # type: ignore
 
         logging.debug(f"Requesting {url}...")
+        async with self.session.get(url) as resp:
+            data = await resp.json()
+            if "code" in data and data["code"] == 404:
+                raise DataNotFound(data["data"])
             await asyncio.to_thread(self.cache.set, url, data, expire=86400)
+            return data
     async def close(self) -> None:
         """
         Closes the client session and cache.
