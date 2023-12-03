@@ -64,7 +64,12 @@ class YattaAPI:
         self.session = aiohttp.ClientSession(headers={"User-Agent": "yatta.py"})
         self.cache = Cache(".cache/yatta")
 
-    async def _request(self, endpoint: str, *, static: bool = False) -> Dict[str, Any]:
+    async def __aenter__(self) -> "YattaAPI":
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:
+        await self.close()
+
         """
         A helper function to make requests to the API.
 
