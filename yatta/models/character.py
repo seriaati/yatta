@@ -173,7 +173,7 @@ class SkillListSkill(BaseModel):
     damage_type: Optional[str] = Field(alias="damageType")
     icon: str
 
-    params: Optional[Dict[str, List[int]]]
+    params: Optional[Dict[str, List[float]]]
 
     @field_validator("skill_points", mode="before")
     def _convert_skill_points(cls, v: Dict[str, Optional[int]]) -> List[SkillPoint]:
@@ -228,7 +228,7 @@ class BaseSkill(BaseModel):
     skill_list: List[SkillListSkill] = Field(alias="skillList")
     status_list: List[Status] = Field(alias="statusList")
     icon: str
-    params: Optional[Dict[str, List[int]]]
+    params: Optional[Dict[str, List[float]]]
 
     promote: List[SkillPromote]
 
