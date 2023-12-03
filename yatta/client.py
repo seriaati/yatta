@@ -60,6 +60,7 @@ class YattaAPI:
 
     def __init__(self, lang: Language = Language.EN):
         self.lang = lang
+        self.cache = Cache(".cache/yatta")
 
     async def _request(self, endpoint: str, *, static: bool = False) -> Dict[str, Any]:
         """
@@ -81,10 +82,14 @@ class YattaAPI:
             url = f"{self.BASE_URL}/static/{endpoint}"
         else:
             url = f"{self.BASE_URL}/{self.lang.value}/{endpoint}"
+
+        cache = await asyncio.to_thread(self.cache.get, url)
+        if cache is not None and use_cache:
+            return cache  # type: ignore
+
         logging.debug(f"Requesting {url}...")
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                return await resp.json()
+            await asyncio.to_thread(self.cache.set, url, data, expire=86400)
+        await self.session.close()
 
     async def fetch_books(self) -> List[Book]:
         """
