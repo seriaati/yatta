@@ -10,7 +10,7 @@ from .exceptions import DataNotFound
 from .models import (
     Book,
     BookDetail,
-    ChangeLog,
+    Changelog,
     Character,
     CharacterDetail,
     Item,
@@ -412,9 +412,9 @@ class YattaAPI:
         relic = RelicSetDetail(**data["data"])
         return relic
 
-    async def fetch_change_logs(self, use_cache: bool = True) -> List[ChangeLog]:
+    async def fetch_changelogs(self, use_cache: bool = True) -> List[Changelog]:
         """
-        Fetch change logs from the API.
+        Fetch changelogs from the API.
 
         Parameters
         ----------
@@ -423,8 +423,8 @@ class YattaAPI:
 
         Returns
         -------
-        List[ChangeLog]
-            A list of ChangeLog objects.
+        List[Changelog]
+            A list of Changelog objects.
 
         Raises
         ------
@@ -432,9 +432,9 @@ class YattaAPI:
             If the requested data is not found.
         """
         data = await self._request("changelog", static=True, use_cache=use_cache)
-        change_logs: List[ChangeLog] = []
+        change_logs: List[Changelog] = []
         for id, log in data["data"].items():
-            change_logs.append(ChangeLog(id=int(id), **log))
+            change_logs.append(Changelog(id=int(id), **log))
         return change_logs
 
     async def fetch_manual_avatar(

@@ -2,24 +2,24 @@ from typing import Dict, List
 
 from pydantic import BaseModel, Field, field_validator
 
-__all__ = ("ChangeLog", "ChangeLogItem")
+__all__ = ("Changelog", "ChangelogCategory")
 
 
-class ChangeLogItem(BaseModel):
+class ChangelogCategory(BaseModel):
     category: str
-    ids: List[int]
+    item_ids: List[int]
 
-    @field_validator("ids", mode="before")
+    @field_validator("item_ids", mode="before")
     def _intify_ids(cls, v: List[str]) -> List[int]:
         return [int(i) for i in v]
 
 
-class ChangeLog(BaseModel):
+class Changelog(BaseModel):
     id: int
     version: str
-    items: List[ChangeLogItem]
+    categories: List[ChangelogCategory] = Field(alias="items")
     beta: bool = Field(False)
 
     @field_validator("items", mode="before")
-    def _convert_items(cls, v: Dict[str, List[int]]) -> List[ChangeLogItem]:
-        return [ChangeLogItem(category=k, ids=v) for k, v in v.items()]
+    def _convert_categories(cls, v: Dict[str, List[int]]) -> List[ChangelogCategory]:
+        return [ChangelogCategory(category=k, item_ids=v) for k, v in v.items()]

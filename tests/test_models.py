@@ -81,7 +81,7 @@ async def test_messages(api_client: yatta.YattaAPI):
 
 @pytest.mark.asyncio
 async def test_change_log(api_client: yatta.YattaAPI):
-    await api_client.fetch_change_logs()
+    await api_client.fetch_changelogs()
 
 
 @pytest.mark.asyncio
