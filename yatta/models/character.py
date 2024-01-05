@@ -415,3 +415,11 @@ class Character(BaseModel):
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
+
+    @property
+    def medium_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/medium")
+
+    @property
+    def large_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/large")
