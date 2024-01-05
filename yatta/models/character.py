@@ -389,6 +389,14 @@ class CharacterDetail(BaseModel):
     def _convert_ascension(cls, v: Dict[str, int]) -> List[CharacterAscensionItem]:
         return [CharacterAscensionItem(id=int(k), amount=v) for k, v in v.items()]
 
+    @property
+    def medium_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/medium")
+
+    @property
+    def large_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/large")
+
 
 class CharacterType(BaseModel):
     path_type: str = Field(alias="pathType")
