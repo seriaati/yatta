@@ -20,6 +20,6 @@ class Changelog(BaseModel):
     categories: List[ChangelogCategory] = Field(alias="items")
     beta: bool = Field(False)
 
-    @field_validator("items", mode="before")
+    @field_validator("categories", mode="before")
     def _convert_categories(cls, v: Dict[str, List[int]]) -> List[ChangelogCategory]:
         return [ChangelogCategory(category=k, item_ids=v) for k, v in v.items()]

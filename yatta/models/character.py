@@ -346,8 +346,8 @@ class CharacterInfo(BaseModel):
     description: str
     voice_actors: List[VoiceActor]
 
-    @field_validator("cv", mode="before")
-    def _convert_cv(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:
+    @field_validator("voice_actors", mode="before")
+    def _convert_voice_actors(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:
         return [VoiceActor(lang=k, name=v) for k, v in v.items()] if v else []
 
 
