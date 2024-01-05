@@ -88,3 +88,8 @@ async def test_change_log(api_client: yatta.YattaAPI):
 async def test_invalid_id(api_client: yatta.YattaAPI):
     with pytest.raises(yatta.DataNotFound):
         await api_client.fetch_character_detail(0)
+
+
+@pytest.mark.asyncio
+async def test_manual_avatar(api_client: yatta.YattaAPI):
+    await api_client.fetch_manual_avatar()

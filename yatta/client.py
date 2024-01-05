@@ -436,3 +436,27 @@ class YattaAPI:
         for id, log in data["data"].items():
             change_logs.append(ChangeLog(id=int(id), **log))
         return change_logs
+
+    async def fetch_manual_avatar(
+        self, use_cache: bool = True
+    ) -> Dict[str, Dict[str, str]]:
+        """
+        Fetch the manual avatar from the API.
+
+        Parameters
+        ----------
+        use_cache : bool, optional
+            Whether to use the cache or not. Defaults to True.
+
+        Returns
+        -------
+        Dict[str, Dict[str, str]]
+            A dictionary of avatar stat keys to their corresponding names and icons.
+
+        Raises
+        ------
+        DataNotFound
+            If the requested data is not found.
+        """
+        data = await self._request("manualAvatar", use_cache=use_cache)
+        return data["data"]
