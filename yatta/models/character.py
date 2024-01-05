@@ -397,6 +397,10 @@ class CharacterDetail(BaseModel):
     def large_icon(self) -> str:
         return self.icon.replace("avatar", "avatar/large")
 
+    @property
+    def round_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/round")
+
 
 class CharacterType(BaseModel):
     path_type: str = Field(alias="pathType")
@@ -423,3 +427,7 @@ class Character(BaseModel):
     @property
     def large_icon(self) -> str:
         return self.icon.replace("avatar", "avatar/large")
+
+    @property
+    def round_icon(self) -> str:
+        return self.icon.replace("avatar", "avatar/round")
