@@ -27,7 +27,7 @@ __all__ = (
     "BaseSkill",
     "BaseStat",
     "AddStat",
-    "CharacterCV",
+    "VoiceActor",
     "CharacterInfo",
     "CharacterType",
     "CharacterDetailTypes",
@@ -336,7 +336,7 @@ class CharacterUpgrade(BaseModel):
         return [AddStat(id=k, value=v) for k, v in v.items()]
 
 
-class CharacterCV(BaseModel):
+class VoiceActor(BaseModel):
     lang: str
     name: str
 
@@ -344,11 +344,11 @@ class CharacterCV(BaseModel):
 class CharacterInfo(BaseModel):
     faction: Optional[str]
     description: str
-    cv: List[CharacterCV]
+    voice_actors: List[VoiceActor]
 
     @field_validator("cv", mode="before")
-    def _convert_cv(cls, v: Optional[Dict[str, str]]) -> List[CharacterCV]:
-        return [CharacterCV(lang=k, name=v) for k, v in v.items()] if v else []
+    def _convert_cv(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:
+        return [VoiceActor(lang=k, name=v) for k, v in v.items()] if v else []
 
 
 class Type(BaseModel):
