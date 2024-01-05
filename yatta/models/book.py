@@ -41,7 +41,7 @@ class BookDetail(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/book/{v}.png"
+        return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
     @field_validator("series", mode="before")
     def _convert_series(cls, v: Dict[str, Dict[str, Any]]) -> List[BookSeries]:
@@ -58,4 +58,4 @@ class Book(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/book/{v}.png"
+        return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
