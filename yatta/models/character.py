@@ -351,14 +351,14 @@ class CharacterInfo(BaseModel):
         return [VoiceActor(lang=k, name=v) for k, v in v.items()] if v else []
 
 
-class Type(BaseModel):
+class CharacterDetailType(BaseModel):
     id: str
     name: str
 
 
 class CharacterDetailTypes(BaseModel):
-    path_type: Type = Field(alias="pathType")
-    combat_type: Type = Field(alias="combatType")
+    path_type: CharacterDetailType = Field(alias="pathType")
+    combat_type: CharacterDetailType = Field(alias="combatType")
 
 
 class CharacterDetail(BaseModel):
