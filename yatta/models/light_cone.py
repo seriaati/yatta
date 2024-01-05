@@ -107,6 +107,14 @@ class LightConeDetail(BaseModel):
             for id, rarity in v.items()
         ]
 
+    @property
+    def medium_icon(self) -> str:
+        return self.icon.replace("equipment", "equipment/medium")
+
+    @property
+    def large_icon(self) -> str:
+        return self.icon.replace("equipment", "equipment/large")
+
 
 class LightCone(BaseModel):
     id: int
@@ -125,3 +133,11 @@ class LightCone(BaseModel):
     @field_validator("type", mode="before")
     def _convert_type(cls, v: Dict[str, str]) -> str:
         return v["pathType"]
+
+    @property
+    def medium_icon(self) -> str:
+        return self.icon.replace("equipment", "equipment/medium")
+
+    @property
+    def large_icon(self) -> str:
+        return self.icon.replace("equipment", "equipment/large")
