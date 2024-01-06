@@ -344,7 +344,7 @@ class VoiceActor(BaseModel):
 class CharacterInfo(BaseModel):
     faction: Optional[str]
     description: str
-    voice_actors: List[VoiceActor]
+    voice_actors: List[VoiceActor] = Field(alias="cv")
 
     @field_validator("voice_actors", mode="before")
     def _convert_voice_actors(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:
