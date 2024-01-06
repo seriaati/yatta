@@ -84,7 +84,8 @@ class ItemDetail(BaseModel):
 
     @field_validator("story", mode="before")
     def _format_story(cls, v: Optional[str]) -> Optional[str]:
-        return remove_html_tags(v) if v else None
+        # the str cast is a temporary fix for the API returning an int
+        return remove_html_tags(str(v)) if v else None
 
     @field_validator("sources", mode="before")
     def _convert_sources(cls, v: List[Dict[str, Any]]) -> List[ItemSource]:
