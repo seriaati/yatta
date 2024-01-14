@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 
 def remove_html_tags(text: str) -> str:
     clean = re.compile(r"<.*?>|\{SPRITE_PRESET#[^\}]+\}")
-    return re.sub(clean, "", text)
+    return re.sub(clean, "", text).replace("\\n", "\n")
 
 
 def find_next_letter(text: str, placeholder: str) -> str:
