@@ -232,6 +232,10 @@ class BaseSkill(BaseModel):
 
     promote: List[SkillPromote]
 
+    @field_validator("description", mode="before")
+    def _format_description(cls, v: Optional[str]) -> Optional[str]:
+        return remove_html_tags(v) if v else None
+
     @field_validator("skill_list", mode="before")
     def _convert_skill_list(
         cls, v: Optional[Dict[str, Dict[str, Any]]]
