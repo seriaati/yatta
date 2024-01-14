@@ -82,6 +82,10 @@ class ItemDetail(BaseModel):
     def _convert_icon(cls, v):
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
+    @field_validator("description", mode="before")
+    def _format_description(cls, v: Optional[str]) -> Optional[str]:
+        return remove_html_tags(v) if v else None
+
     @field_validator("story", mode="before")
     def _format_story(cls, v: Optional[str]) -> Optional[str]:
         # the str cast is a temporary fix for the API returning an int
