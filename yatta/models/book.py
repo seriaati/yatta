@@ -56,6 +56,10 @@ class Book(BaseModel):
     icon: str
     route: str
 
+    @field_validator("name", mode="before")
+    def _format_name(cls, v: str) -> str:
+        return remove_html_tags(v)
+
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
