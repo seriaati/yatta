@@ -24,6 +24,8 @@ from .models import (
 
 __all__ = ("YattaAPI", "Language")
 
+LOGGER_ = logging.getLogger("yatta.py")
+
 
 class Language(Enum):
     CHT = "cht"
@@ -105,7 +107,7 @@ class YattaAPI:
         if cache is not None and use_cache:
             return cache  # type: ignore
 
-        logging.debug(f"Requesting {url}...")
+        LOGGER_.debug(f"Requesting {url}...")
         async with self.session.get(url) as resp:
             data = await resp.json()
             if "code" in data and data["code"] == 404:
@@ -407,7 +409,7 @@ class YattaAPI:
         DataNotFound
             If the requested data is not found.
         """
-        logging.debug(f"Fetching relic set detail for ID {id}")
+        LOGGER_.debug(f"Fetching relic set detail for ID {id}")
         data = await self._request(f"relic/{id}", use_cache=use_cache)
         relic = RelicSetDetail(**data["data"])
         return relic
