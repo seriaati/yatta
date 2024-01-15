@@ -50,15 +50,17 @@ class CharacterVoice(BaseModel):
 
 
 class CharacterScript(BaseModel):
-    story: List[CharacterStory]
-    voice: List[CharacterVoice]
+    stories: List[CharacterStory]
+    voices: List[CharacterVoice]
 
-    @field_validator("story", mode="before")
-    def _convert_story(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterStory]:
+    @field_validator("stories", mode="before")
+    def _convert_stories(
+        cls, v: Optional[List[Dict[str, Any]]]
+    ) -> List[CharacterStory]:
         return [CharacterStory(**s) for s in v] if v else []
 
-    @field_validator("voice", mode="before")
-    def _convert_voice(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterVoice]:
+    @field_validator("voices", mode="before")
+    def _convert_voices(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterVoice]:
         return [CharacterVoice(**s) for s in v] if v else []
 
 
