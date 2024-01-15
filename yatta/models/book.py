@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..utils import remove_html_tags
+from ..utils import format_str
 
 __all__ = (
     "BookSeries",
@@ -19,7 +19,7 @@ class BookSeries(BaseModel):
 
     @field_validator("story", mode="before")
     def _format_story(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
     @field_validator("image_list", mode="before")
     def _convert_image_list(cls, v: Optional[List[str]]) -> List[str]:
@@ -37,7 +37,7 @@ class BookDetail(BaseModel):
 
     @field_validator("name", mode="before")
     def _format_name(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -58,7 +58,7 @@ class Book(BaseModel):
 
     @field_validator("name", mode="before")
     def _format_name(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:

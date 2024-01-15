@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..utils import remove_html_tags, replace_placeholders
+from ..utils import format_str, replace_placeholders
 
 __all__ = (
     "Character",
@@ -40,7 +40,7 @@ class CharacterStory(BaseModel):
 
     @field_validator("text", mode="before")
     def _format_text(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
 
 class CharacterVoice(BaseModel):
@@ -50,8 +50,8 @@ class CharacterVoice(BaseModel):
 
 
 class CharacterScript(BaseModel):
-    stories: List[CharacterStory]
-    voices: List[CharacterVoice]
+    stories: List[CharacterStory] = Field(alias="story")
+    voices: List[CharacterVoice] = Field(alias="voice")
 
     @field_validator("stories", mode="before")
     def _convert_stories(
@@ -92,7 +92,7 @@ class CharacterEidolon(BaseModel):
     @field_validator("description", mode="before")
     def _format_description(cls, v: str, values) -> str:
         params = values.data.get("params")
-        return replace_placeholders(remove_html_tags(v), params)
+        return replace_placeholders(format_str(v), params)
 
     @field_validator("skill_add_level_list", mode="before")
     def _convert_skill_add_level_list(
@@ -189,11 +189,11 @@ class SkillListSkill(BaseModel):
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
     @field_validator("simplified_description", mode="before")
     def _format_simplified_description(cls, v: Optional[str]) -> Optional[str]:
-        return remove_html_tags(v) if v else None
+        return format_str(v) if v else None
 
     @field_validator("traces", mode="before")
     def _convert_traces(cls, v: Optional[List[int]]) -> List[int]:
@@ -236,7 +236,7 @@ class BaseSkill(BaseModel):
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: Optional[str]) -> Optional[str]:
-        return remove_html_tags(v) if v else None
+        return format_str(v) if v else None
 
     @field_validator("skill_list", mode="before")
     def _convert_skill_list(
@@ -351,6 +351,10 @@ class CharacterInfo(BaseModel):
     faction: Optional[str]
     description: str
     voice_actors: List[VoiceActor] = Field(alias="cv")
+
+    @field_validator("description", mode="before")
+    def _format_description(cls, v: str) -> str:
+        return format_str(v)
 
     @field_validator("voice_actors", mode="before")
     def _convert_voice_actors(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:

@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..utils import remove_html_tags, replace_placeholders
+from ..utils import format_str, replace_placeholders
 
 __all__ = (
     "Relic",
@@ -30,7 +30,7 @@ class SetEffect(BaseModel):
     @field_validator("description", mode="before")
     def _format_description(cls, v: str, values) -> str:
         params = values.data.get("params")
-        return replace_placeholders(remove_html_tags(v), params)
+        return replace_placeholders(format_str(v), params)
 
 
 class SetEffects(BaseModel):

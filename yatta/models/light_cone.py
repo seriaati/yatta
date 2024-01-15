@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..utils import remove_html_tags
+from ..utils import format_str
 
 __all__ = (
     "LightCone",
@@ -27,7 +27,7 @@ class LightConeSkill(BaseModel):
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
 
 class LightConeCostItem(BaseModel):
@@ -92,7 +92,7 @@ class LightConeDetail(BaseModel):
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: str) -> str:
-        return remove_html_tags(v)
+        return format_str(v)
 
     @field_validator("upgrades", mode="before")
     def _convert_upgrades(cls, v: List[Dict[str, Any]]) -> List[LightConeUpgrade]:
