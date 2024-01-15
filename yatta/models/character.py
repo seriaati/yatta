@@ -389,6 +389,10 @@ class CharacterDetail(BaseModel):
     ascension: List[CharacterAscensionItem]
     script: CharacterScript
 
+    @field_validator("name", mode="before")
+    def _format_name(cls, v: str) -> str:
+        return format_str(v)
+
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
@@ -427,6 +431,10 @@ class Character(BaseModel):
     types: CharacterType
     route: str
     beta: bool = Field(False)
+
+    @field_validator("name", mode="before")
+    def _format_name(cls, v: str) -> str:
+        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
