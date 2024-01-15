@@ -250,6 +250,8 @@ class BaseSkill(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
+        if "SkillIcon" in v:
+            return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
         return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
 
     @field_validator("promote", mode="before")
