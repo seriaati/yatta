@@ -51,6 +51,8 @@ class YattaAPI:
     ----------
     lang : Language, optional
         The language to use for the API. Defaults to Language.EN.
+    cache_ttl : int, optional
+        The time to live for the cache. Defaults to 3600.
 
     Attributes
     ----------
@@ -62,8 +64,10 @@ class YattaAPI:
 
     BASE_URL: Final[str] = "https://api.yatta.top/hsr/v2"
 
-    def __init__(self, lang: Language = Language.EN):
+    def __init__(self, lang: Language = Language.EN, cache_ttl: int = 3600):
         self.lang = lang
+        self.cache_ttl = cache_ttl
+
         self.session = aiohttp.ClientSession(headers={"User-Agent": "yatta.py"})
         self.cache = Cache(".cache/yatta")
 
@@ -112,7 +116,7 @@ class YattaAPI:
             data = await resp.json()
             if "code" in data and data["code"] == 404:
                 raise DataNotFound(data["data"])
-            await asyncio.to_thread(self.cache.set, url, data, expire=86400)
+            await asyncio.to_thread(self.cache.set, url, data, expire=self.cache_ttl)
             return data
 
     async def close(self) -> None:
