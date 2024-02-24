@@ -17,6 +17,7 @@ pytest = "^7.4.3"
 pytest-asyncio = "^0.21.1"
 ruff = "^0.1.6"
 git-cliff = "^1.4.0"
+pre-commit = "^3.6.2"
 
 [build-system]
 requires = ["poetry-core"]
