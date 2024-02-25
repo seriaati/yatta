@@ -18,4 +18,4 @@ class Message(BaseModel):
     id: int
     contact: Contact = Field(alias="contacts")
     section_count: int = Field(alias="sectionCount")
-    route: str
+    route: str | None = None
