@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -28,36 +28,34 @@ class RecipeMaterial(BaseModel):
 class Recipe(BaseModel):
     coin_cost: int = Field(alias="coinCost")
     required_world_level: int = Field(alias="worldLevelRequire")
-    materials: List[RecipeMaterial] = Field(alias="materialCost")
-    special_materials: List[RecipeMaterial] = Field(alias="specialMaterialCost")
+    materials: list[RecipeMaterial] = Field(alias="materialCost")
+    special_materials: list[RecipeMaterial] = Field(alias="specialMaterialCost")
 
     @field_validator("coin_cost", mode="before")
-    def _convert_coin_cost(cls, v: Optional[int]) -> int:
+    def _convert_coin_cost(cls, v: int | None) -> int:
         return v or 0
 
     @field_validator("required_world_level", mode="before")
-    def _convert_required_world_level(cls, v: Optional[int]) -> int:
+    def _convert_required_world_level(cls, v: int | None) -> int:
         return v or 0
 
     @field_validator("materials", mode="before")
-    def _convert_materials(
-        cls, v: Optional[Dict[str, Dict[str, Any]]]
-    ) -> List[RecipeMaterial]:
-        return [RecipeMaterial(id=int(id), **m) for id, m in v.items()] if v else []
+    def _convert_materials(cls, v: dict[str, dict[str, Any]] | None) -> list[RecipeMaterial]:
+        return [RecipeMaterial(id=int(id_), **m) for id_, m in v.items()] if v else []
 
     @field_validator("special_materials", mode="before")
     def _convert_special_materials(
-        cls, v: Optional[Dict[str, Dict[str, Any]]]
-    ) -> List[RecipeMaterial]:
-        return [RecipeMaterial(id=int(id), **m) for id, m in v.items()] if v else []
+        cls, v: dict[str, dict[str, Any]] | None
+    ) -> list[RecipeMaterial]:
+        return [RecipeMaterial(id=int(id_), **m) for id_, m in v.items()] if v else []
 
 
 class ItemSource(BaseModel):
     description: str
-    recipes: List[Recipe] = Field(alias="recipe")
+    recipes: list[Recipe] = Field(alias="recipe")
 
     @field_validator("recipes", mode="before")
-    def _convert_recipes(cls, v: Optional[List[Dict[str, Any]]]) -> List[Recipe]:
+    def _convert_recipes(cls, v: list[dict[str, Any]] | None) -> list[Recipe]:
         return [Recipe(**r) for r in v] if v else []
 
 
@@ -71,28 +69,28 @@ class ItemDetail(BaseModel):
     name: str
     beta: bool = Field(False)
     rarity: int = Field(alias="rank")
-    tags: List[str]
+    tags: list[str]
     icon: str
     route: str
     description: str
-    story: Optional[str]
-    sources: List[ItemSource] = Field(alias="source")
+    story: str | None
+    sources: list[ItemSource] = Field(alias="source")
 
     @field_validator("icon", mode="before")
-    def _convert_icon(cls, v):
+    def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
     @field_validator("description", mode="before")
-    def _format_description(cls, v: Optional[str]) -> Optional[str]:
+    def _format_description(cls, v: str | None) -> str | None:
         return format_str(v) if v else None
 
     @field_validator("story", mode="before")
-    def _format_story(cls, v: Optional[str]) -> Optional[str]:
+    def _format_story(cls, v: str | None) -> str | None:
         # the str cast is a temporary fix for the API returning an int
         return format_str(str(v)) if v else None
 
     @field_validator("sources", mode="before")
-    def _convert_sources(cls, v: List[Dict[str, Any]]) -> List[ItemSource]:
+    def _convert_sources(cls, v: list[dict[str, Any]]) -> list[ItemSource]:
         return [ItemSource(**s) for s in v] if v else []
 
 
@@ -102,10 +100,10 @@ class Item(BaseModel):
     beta: bool = Field(False)
     rarity: int = Field(alias="rank")
     type: int
-    tags: List[str]
+    tags: list[str]
     icon: str
     route: str
 
     @field_validator("icon", mode="before")
-    def _convert_icon(cls, v):
+    def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"

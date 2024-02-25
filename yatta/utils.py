@@ -1,5 +1,4 @@
 import re
-from typing import Dict, List, Optional, Union
 
 
 def format_str(text: str) -> str:
@@ -15,8 +14,8 @@ def find_next_letter(text: str, placeholder: str) -> str:
 
 
 def replace_placeholders(
-    string: str, params: Optional[Union[Dict[str, List[Union[float, int]]], List[int]]]
-):
+    string: str, params: dict[str, list[float | int]] | list[int] | None
+) -> str:
     if params is None:
         return string
     if isinstance(params, list):
@@ -24,8 +23,8 @@ def replace_placeholders(
             placeholder = f"#i[{i}]"
             if placeholder in string:
                 if find_next_letter(string, placeholder) == "%":
-                    value *= 100
-                string = string.replace(placeholder, str(value))
+                    value_ = value * 100
+                string = string.replace(placeholder, str(value_))
         return string
     for key, values in params.items():
         value = values[0]

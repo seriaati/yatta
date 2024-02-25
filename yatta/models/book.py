@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -15,14 +15,14 @@ class BookSeries(BaseModel):
     id: int
     name: str
     story: str
-    image_list: List[str] = Field(alias="imageList")
+    image_list: list[str] = Field(alias="imageList")
 
     @field_validator("story", mode="before")
     def _format_story(cls, v: str) -> str:
         return format_str(v)
 
     @field_validator("image_list", mode="before")
-    def _convert_image_list(cls, v: Optional[List[str]]) -> List[str]:
+    def _convert_image_list(cls, v: list[str] | None) -> list[str]:
         return v if v else []
 
 
@@ -33,7 +33,7 @@ class BookDetail(BaseModel):
     chapter_count: int = Field(0)
     icon: str
     description: str
-    series: List[BookSeries]
+    series: list[BookSeries]
 
     @field_validator("name", mode="before")
     def _format_name(cls, v: str) -> str:
@@ -44,8 +44,8 @@ class BookDetail(BaseModel):
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
 
     @field_validator("series", mode="before")
-    def _convert_series(cls, v: Dict[str, Dict[str, Any]]) -> List[BookSeries]:
-        return [BookSeries(id=int(id), **s) for id, s in v.items()]
+    def _convert_series(cls, v: dict[str, dict[str, Any]]) -> list[BookSeries]:
+        return [BookSeries(id=int(series_id), **s) for series_id, s in v.items()]
 
 
 class Book(BaseModel):

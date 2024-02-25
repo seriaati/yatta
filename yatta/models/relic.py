@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -24,38 +24,38 @@ class Relic(BaseModel):
 
 
 class SetEffect(BaseModel):
-    params: Optional[Dict[str, List[Union[int, float]]]]
+    params: dict[str, list[int | float]] | None
     description: str
 
     @field_validator("description", mode="before")
-    def _format_description(cls, v: str, values) -> str:
+    def _format_description(cls, v: str, values: Any) -> str:
         params = values.data.get("params")
         return replace_placeholders(format_str(v), params)
 
 
 class SetEffects(BaseModel):
     two_piece: SetEffect = Field(alias="2")
-    four_piece: Optional[SetEffect] = Field(None, alias="4")
+    four_piece: SetEffect | None = Field(None, alias="4")
 
 
 class RelicSetDetail(BaseModel):
     id: int
     name: str
     icon: str
-    rarity_list: List[int] = Field(alias="levelList")
+    rarity_list: list[int] = Field(alias="levelList")
     is_planar_suit: bool = Field(alias="isPlanarSuit")
     route: str
     beta: bool = Field(False)
 
     set_effects: SetEffects = Field(alias="skillList")
-    relics: List[Relic] = Field(alias="suite")
+    relics: list[Relic] = Field(alias="suite")
 
     @field_validator("icon", mode="before")
     def convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/relic/{v}.png"
 
     @field_validator("relics", mode="before")
-    def convert_relics(cls, v: Dict[str, Dict[str, Any]]) -> List[Relic]:
+    def convert_relics(cls, v: dict[str, dict[str, Any]]) -> list[Relic]:
         return [Relic(pos=pos, **v[pos]) for pos in v]
 
 
@@ -64,7 +64,7 @@ class RelicSet(BaseModel):
     name: str
     beta: bool = Field(False)
     icon: str
-    rarity_list: List[int] = Field(alias="levelList")
+    rarity_list: list[int] = Field(alias="levelList")
     is_planar_suit: bool = Field(alias="isPlanarSuit")
     route: str
 

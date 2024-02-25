@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -46,21 +46,19 @@ class CharacterStory(BaseModel):
 class CharacterVoice(BaseModel):
     title: str
     text: str
-    audio: Optional[int]
+    audio: int | None
 
 
 class CharacterScript(BaseModel):
-    stories: List[CharacterStory] = Field(alias="story")
-    voices: List[CharacterVoice] = Field(alias="voice")
+    stories: list[CharacterStory] = Field(alias="story")
+    voices: list[CharacterVoice] = Field(alias="voice")
 
     @field_validator("stories", mode="before")
-    def _convert_stories(
-        cls, v: Optional[List[Dict[str, Any]]]
-    ) -> List[CharacterStory]:
+    def _convert_stories(cls, v: list[dict[str, Any]] | None) -> list[CharacterStory]:
         return [CharacterStory(**s) for s in v] if v else []
 
     @field_validator("voices", mode="before")
-    def _convert_voices(cls, v: Optional[List[Dict[str, Any]]]) -> List[CharacterVoice]:
+    def _convert_voices(cls, v: list[dict[str, Any]] | None) -> list[CharacterVoice]:
         return [CharacterVoice(**s) for s in v] if v else []
 
 
@@ -83,24 +81,20 @@ class CharacterEidolon(BaseModel):
     rank: int
     name: str
 
-    params: Optional[List[Union[int, float]]]
+    params: list[int | float] | None
     description: str
-    skill_add_level_list: List[SkillAdd] = Field(alias="skillAddLevelList")
+    skill_add_level_list: list[SkillAdd] = Field(alias="skillAddLevelList")
     """List of skills that increase their level because of this eidolon"""
     icon: str
 
     @field_validator("description", mode="before")
-    def _format_description(cls, v: str, values) -> str:
+    def _format_description(cls, v: str, values: Any) -> str:
         params = values.data.get("params")
         return replace_placeholders(format_str(v), params)
 
     @field_validator("skill_add_level_list", mode="before")
-    def _convert_skill_add_level_list(
-        cls, v: Optional[Dict[str, int]]
-    ) -> List[SkillAdd]:
-        return (
-            [SkillAdd(id=int(id), level=level) for id, level in v.items()] if v else []
-        )
+    def _convert_skill_add_level_list(cls, v: dict[str, int] | None) -> list[SkillAdd]:
+        return [SkillAdd(id=int(id_), level=level) for id_, level in v.items()] if v else []
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -114,17 +108,12 @@ class SkillPromoteCostItem(BaseModel):
 
 class SkillPromote(BaseModel):
     level: int
-    cost_items: List[SkillPromoteCostItem] = Field(alias="costItems")
+    cost_items: list[SkillPromoteCostItem] = Field(alias="costItems")
 
     @field_validator("cost_items", mode="before")
-    def _convert_cost_items(
-        cls, v: Dict[str, Optional[Dict[str, int]]]
-    ) -> List[SkillPromoteCostItem]:
+    def _convert_cost_items(cls, v: dict[str, dict[str, int] | None]) -> list[SkillPromoteCostItem]:
         return (
-            [
-                SkillPromoteCostItem(id=int(id), amount=a)
-                for id, a in v["costItems"].items()
-            ]
+            [SkillPromoteCostItem(id=int(id_), amount=a) for id_, a in v["costItems"].items()]
             if v["costItems"]
             else []
         )
@@ -132,7 +121,7 @@ class SkillPromote(BaseModel):
 
 class Status(BaseModel):
     name: str
-    value: Union[int, float]
+    value: int | float
     icon: str
 
     @field_validator("icon", mode="before")
@@ -153,38 +142,36 @@ class WeaknessBreak(BaseModel):
 
 class SkillPoint(BaseModel):
     type: str
-    value: Optional[int]
+    value: int | None
 
 
 class SkillListSkill(BaseModel):
     id: int
     name: str
-    tag: Optional[str]
+    tag: str | None
     type: str
 
     max_level: int = Field(alias="maxLevel")
-    skill_points: List[SkillPoint] = Field(alias="skillPoints")
-    weakness_break: List[WeaknessBreak] = Field(alias="weaknessBreak")
+    skill_points: list[SkillPoint] = Field(alias="skillPoints")
+    weakness_break: list[WeaknessBreak] = Field(alias="weaknessBreak")
     description: str
-    simplified_description: Optional[str] = Field(alias="descriptionSimple")
+    simplified_description: str | None = Field(alias="descriptionSimple")
 
-    traces: List[int]
-    eidolons: List[int]
-    extra_effects: List[ExtraEffect] = Field(alias="extraEffects")
-    attack_type: Optional[str] = Field(alias="attackType")
-    damage_type: Optional[str] = Field(alias="damageType")
+    traces: list[int]
+    eidolons: list[int]
+    extra_effects: list[ExtraEffect] = Field(alias="extraEffects")
+    attack_type: str | None = Field(alias="attackType")
+    damage_type: str | None = Field(alias="damageType")
     icon: str
 
-    params: Optional[Dict[str, List[float]]]
+    params: dict[str, list[float]] | None
 
     @field_validator("skill_points", mode="before")
-    def _convert_skill_points(cls, v: Dict[str, Optional[int]]) -> List[SkillPoint]:
+    def _convert_skill_points(cls, v: dict[str, int | None]) -> list[SkillPoint]:
         return [SkillPoint(type=k, value=v) for k, v in v.items()]
 
     @field_validator("weakness_break", mode="before")
-    def _convert_weakness_break(
-        cls, v: Optional[Dict[str, int]]
-    ) -> List[WeaknessBreak]:
+    def _convert_weakness_break(cls, v: dict[str, int] | None) -> list[WeaknessBreak]:
         return [WeaknessBreak(type=k, value=v) for k, v in v.items()] if v else []
 
     @field_validator("description", mode="before")
@@ -192,21 +179,19 @@ class SkillListSkill(BaseModel):
         return format_str(v)
 
     @field_validator("simplified_description", mode="before")
-    def _format_simplified_description(cls, v: Optional[str]) -> Optional[str]:
+    def _format_simplified_description(cls, v: str | None) -> str | None:
         return format_str(v) if v else None
 
     @field_validator("traces", mode="before")
-    def _convert_traces(cls, v: Optional[List[int]]) -> List[int]:
+    def _convert_traces(cls, v: list[int] | None) -> list[int]:
         return v if v else []
 
     @field_validator("eidolons", mode="before")
-    def _convert_eidolons(cls, v: Optional[List[int]]) -> List[int]:
+    def _convert_eidolons(cls, v: list[int] | None) -> list[int]:
         return v if v else []
 
     @field_validator("extra_effects", mode="before")
-    def _convert_extra_effects(
-        cls, v: Optional[List[Dict[str, Any]]]
-    ) -> List[ExtraEffect]:
+    def _convert_extra_effects(cls, v: list[dict[str, Any]] | None) -> list[ExtraEffect]:
         return [ExtraEffect(**e) for e in v] if v else []
 
     @field_validator("icon", mode="before")
@@ -216,36 +201,34 @@ class SkillListSkill(BaseModel):
 
 class BaseSkill(BaseModel):
     id: int
-    name: Optional[str]
-    description: Optional[str]
+    name: str | None
+    description: str | None
 
     point_type: str = Field(alias="pointType")
     point_position: str = Field(alias="pointPosition")
     max_level: int = Field(alias="maxLevel")
     is_default: bool = Field(alias="isDefault")
 
-    avatar_level_limit: Optional[int] = Field(alias="avatarLevelLimit")
-    avatar_promotion_limit: Optional[int] = Field(alias="avatarPromotionLimit")
+    avatar_level_limit: int | None = Field(alias="avatarLevelLimit")
+    avatar_promotion_limit: int | None = Field(alias="avatarPromotionLimit")
 
-    skill_list: List[SkillListSkill] = Field(alias="skillList")
-    status_list: List[Status] = Field(alias="statusList")
+    skill_list: list[SkillListSkill] = Field(alias="skillList")
+    status_list: list[Status] = Field(alias="statusList")
     icon: str
-    params: Optional[Dict[str, List[float]]]
+    params: dict[str, list[float]] | None
 
-    promote: List[SkillPromote]
+    promote: list[SkillPromote]
 
     @field_validator("description", mode="before")
-    def _format_description(cls, v: Optional[str]) -> Optional[str]:
+    def _format_description(cls, v: str | None) -> str | None:
         return format_str(v) if v else None
 
     @field_validator("skill_list", mode="before")
-    def _convert_skill_list(
-        cls, v: Optional[Dict[str, Dict[str, Any]]]
-    ) -> List[SkillListSkill]:
+    def _convert_skill_list(cls, v: dict[str, dict[str, Any]] | None) -> list[SkillListSkill]:
         return [SkillListSkill(id=int(s), **v[s]) for s in v] if v else []
 
     @field_validator("status_list", mode="before")
-    def _convert_status_list(cls, v: Optional[List[Dict[str, Any]]]) -> List[Status]:
+    def _convert_status_list(cls, v: list[dict[str, Any]] | None) -> list[Status]:
         return [Status(**s) for s in v] if v else []
 
     @field_validator("icon", mode="before")
@@ -255,58 +238,56 @@ class BaseSkill(BaseModel):
         return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
 
     @field_validator("promote", mode="before")
-    def _convert_promote(
-        cls, v: Dict[str, Dict[str, Optional[Dict[str, int]]]]
-    ) -> List[SkillPromote]:
+    def _convert_promote(cls, v: dict[str, dict[str, dict[str, int] | None]]) -> list[SkillPromote]:
         return [SkillPromote(level=int(p), costItems=v[p]) for p in v] if v else []  # type: ignore
 
 
 class SkillTreeSkill(BaseModel):
     id: int
-    points_direction: Optional[str] = Field(alias="pointsDirection")
-    points: List[int]
+    points_direction: str | None = Field(alias="pointsDirection")
+    points: list[int]
 
     @field_validator("points", mode="before")
-    def _convert_points(cls, v: Optional[List[int]]) -> List[int]:
+    def _convert_points(cls, v: list[int] | None) -> list[int]:
         return v if v else []
 
 
 class SkillTree(BaseModel):
     id: int
     type: str
-    tree: List[SkillTreeSkill] = Field([])
+    tree: list[SkillTreeSkill] = Field([])
 
     @field_validator("tree", mode="before")
-    def _convert_tree(cls, v: Dict[str, Dict[str, Any]]) -> List[SkillTreeSkill]:
+    def _convert_tree(cls, v: dict[str, dict[str, Any]]) -> list[SkillTreeSkill]:
         return [SkillTreeSkill(**v[s]) for s in v]
 
 
 class CharacterTraces(BaseModel):
-    main_skills: List[BaseSkill] = Field(alias="mainSkills")
-    sub_skills: List[BaseSkill] = Field(alias="subSkills")
-    tree_skills: List[SkillTree] = Field(alias="skillsTree")
+    main_skills: list[BaseSkill] = Field(alias="mainSkills")
+    sub_skills: list[BaseSkill] = Field(alias="subSkills")
+    tree_skills: list[SkillTree] = Field(alias="skillsTree")
 
     @field_validator("main_skills", mode="before")
-    def _convert_main_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[BaseSkill]:
+    def _convert_main_skills(cls, v: dict[str, dict[str, Any]]) -> list[BaseSkill]:
         return [BaseSkill(**v[s]) for s in v]
 
     @field_validator("sub_skills", mode="before")
-    def _convert_sub_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[BaseSkill]:
+    def _convert_sub_skills(cls, v: dict[str, dict[str, Any]]) -> list[BaseSkill]:
         return [BaseSkill(**v[s]) for s in v]
 
     @field_validator("tree_skills", mode="before")
-    def _convert_tree_skills(cls, v: Dict[str, Dict[str, Any]]) -> List[SkillTree]:
+    def _convert_tree_skills(cls, v: dict[str, dict[str, Any]]) -> list[SkillTree]:
         return [SkillTree(**v[s]) for s in v]
 
 
 class AddStat(BaseModel):
     id: str
-    value: Union[int, float]
+    value: int | float
 
 
 class BaseStat(BaseModel):
     id: str
-    value: Union[int, float]
+    value: int | float
 
 
 class UpgradeItem(BaseModel):
@@ -316,31 +297,31 @@ class UpgradeItem(BaseModel):
 
 class CharacterUpgrade(BaseModel):
     level: int
-    cost_items: List[UpgradeItem] = Field(alias="costItems")
+    cost_items: list[UpgradeItem] = Field(alias="costItems")
     new_max_level: int = Field(alias="maxLevel")
     required_player_level: int = Field(alias="playerLevelRequire")
     required_world_level: int = Field(alias="worldLevelRequire")
-    base_stats: List[BaseStat] = Field(alias="skillBase")
-    add_stats: List[AddStat] = Field(alias="skillAdd")
+    base_stats: list[BaseStat] = Field(alias="skillBase")
+    add_stats: list[AddStat] = Field(alias="skillAdd")
 
     @field_validator("cost_items", mode="before")
-    def _convert_cost_items(cls, v: Optional[Dict[str, int]]) -> List[UpgradeItem]:
+    def _convert_cost_items(cls, v: dict[str, int] | None) -> list[UpgradeItem]:
         return [UpgradeItem(id=int(k), amount=v) for k, v in v.items()] if v else []
 
     @field_validator("required_player_level", mode="before")
-    def _convert_required_player_level(cls, v: Optional[int]) -> int:
+    def _convert_required_player_level(cls, v: int | None) -> int:
         return v if v else 0
 
     @field_validator("required_world_level", mode="before")
-    def _convert_required_world_level(cls, v: Optional[int]) -> int:
+    def _convert_required_world_level(cls, v: int | None) -> int:
         return v if v else 0
 
     @field_validator("base_stats", mode="before")
-    def _convert_base_stats(cls, v: Dict[str, Union[int, float]]) -> List[BaseStat]:
+    def _convert_base_stats(cls, v: dict[str, int | float]) -> list[BaseStat]:
         return [BaseStat(id=k, value=v) for k, v in v.items()]
 
     @field_validator("add_stats", mode="before")
-    def _convert_add_stats(cls, v: Dict[str, Union[int, float]]) -> List[AddStat]:
+    def _convert_add_stats(cls, v: dict[str, int | float]) -> list[AddStat]:
         return [AddStat(id=k, value=v) for k, v in v.items()]
 
 
@@ -350,16 +331,16 @@ class VoiceActor(BaseModel):
 
 
 class CharacterInfo(BaseModel):
-    faction: Optional[str]
+    faction: str | None
     description: str
-    voice_actors: List[VoiceActor] = Field(alias="cv")
+    voice_actors: list[VoiceActor] = Field(alias="cv")
 
     @field_validator("description", mode="before")
     def _format_description(cls, v: str) -> str:
         return format_str(v)
 
     @field_validator("voice_actors", mode="before")
-    def _convert_voice_actors(cls, v: Optional[Dict[str, str]]) -> List[VoiceActor]:
+    def _convert_voice_actors(cls, v: dict[str, str] | None) -> list[VoiceActor]:
         return [VoiceActor(lang=k, name=v) for k, v in v.items()] if v else []
 
 
@@ -383,10 +364,10 @@ class CharacterDetail(BaseModel):
     release: int
     route: str
     info: CharacterInfo = Field(alias="fetter")
-    upgrades: List[CharacterUpgrade] = Field(alias="upgrade")
+    upgrades: list[CharacterUpgrade] = Field(alias="upgrade")
     traces: CharacterTraces
-    eidolons: List[CharacterEidolon]
-    ascension: List[CharacterAscensionItem]
+    eidolons: list[CharacterEidolon]
+    ascension: list[CharacterAscensionItem]
     script: CharacterScript
 
     @field_validator("name", mode="before")
@@ -398,11 +379,11 @@ class CharacterDetail(BaseModel):
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
 
     @field_validator("eidolons", mode="before")
-    def _convert_eidolons(cls, v: Dict[str, Dict[str, Any]]) -> List[CharacterEidolon]:
+    def _convert_eidolons(cls, v: dict[str, dict[str, Any]]) -> list[CharacterEidolon]:
         return [CharacterEidolon(**v[s]) for s in v]
 
     @field_validator("ascension", mode="before")
-    def _convert_ascension(cls, v: Dict[str, int]) -> List[CharacterAscensionItem]:
+    def _convert_ascension(cls, v: dict[str, int]) -> list[CharacterAscensionItem]:
         return [CharacterAscensionItem(id=int(k), amount=v) for k, v in v.items()]
 
     @property

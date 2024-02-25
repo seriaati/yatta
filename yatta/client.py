@@ -1,12 +1,12 @@
 import asyncio
 import logging
 from enum import Enum
-from typing import Any, Dict, Final, List
+from typing import Any, Final
 
 import aiohttp
 from diskcache import Cache
 
-from .exceptions import DataNotFound
+from .exceptions import DataNotFoundError
 from .models import (
     Book,
     BookDetail,
@@ -64,7 +64,7 @@ class YattaAPI:
 
     BASE_URL: Final[str] = "https://api.yatta.top/hsr/v2"
 
-    def __init__(self, lang: Language = Language.EN, cache_ttl: int = 3600):
+    def __init__(self, lang: Language = Language.EN, cache_ttl: int = 3600) -> None:
         self.lang = lang
         self.cache_ttl = cache_ttl
 
@@ -74,12 +74,12 @@ class YattaAPI:
     async def __aenter__(self) -> "YattaAPI":
         return self
 
-    async def __aexit__(self, exc_type, exc, tb) -> None:
+    async def __aexit__(self, exc_type, exc, tb) -> None:  # noqa: ANN001
         await self.close()
 
     async def _request(
         self, endpoint: str, *, static: bool = False, use_cache: bool
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         A helper function to make requests to the API.
 
@@ -111,11 +111,11 @@ class YattaAPI:
         if cache is not None and use_cache:
             return cache  # type: ignore
 
-        LOGGER_.debug(f"Requesting {url}...")
+        LOGGER_.debug("Requesting %s...", url)
         async with self.session.get(url) as resp:
             data = await resp.json()
             if "code" in data and data["code"] == 404:
-                raise DataNotFound(data["data"])
+                raise DataNotFoundError(data["data"])
             await asyncio.to_thread(self.cache.set, url, data, expire=self.cache_ttl)
             return data
 
@@ -126,7 +126,7 @@ class YattaAPI:
         await self.session.close()
         self.cache.close()
 
-    async def fetch_books(self, use_cache: bool = True) -> List[Book]:
+    async def fetch_books(self, use_cache: bool = True) -> list[Book]:
         """
         Fetch all books from the API.
 
@@ -174,7 +174,7 @@ class YattaAPI:
         book = BookDetail(**data["data"])
         return book
 
-    async def fetch_characters(self, use_cache: bool = True) -> List[Character]:
+    async def fetch_characters(self, use_cache: bool = True) -> list[Character]:
         """
         Fetch all characters from the API.
 
@@ -197,9 +197,7 @@ class YattaAPI:
         characters = [Character(**c) for c in data["data"]["items"].values()]
         return characters
 
-    async def fetch_character_detail(
-        self, id: int, use_cache: bool = True
-    ) -> CharacterDetail:
+    async def fetch_character_detail(self, id: int, use_cache: bool = True) -> CharacterDetail:
         """
         Fetch a character's detail from the API.
 
@@ -224,7 +222,7 @@ class YattaAPI:
         character = CharacterDetail(**data["data"])
         return character
 
-    async def fetch_items(self, use_cache: bool = True) -> List[Item]:
+    async def fetch_items(self, use_cache: bool = True) -> list[Item]:
         """
         Fetch all items from the API.
 
@@ -272,7 +270,7 @@ class YattaAPI:
         item = ItemDetail(**data["data"])
         return item
 
-    async def fetch_light_cones(self, use_cache: bool = True) -> List[LightCone]:
+    async def fetch_light_cones(self, use_cache: bool = True) -> list[LightCone]:
         """
         Fetch all light cones from the API.
 
@@ -295,9 +293,7 @@ class YattaAPI:
         light_cones = [LightCone(**lc) for lc in data["data"]["items"].values()]
         return light_cones
 
-    async def fetch_light_cone_detail(
-        self, id: int, use_cache: bool = True
-    ) -> LightConeDetail:
+    async def fetch_light_cone_detail(self, id: int, use_cache: bool = True) -> LightConeDetail:
         """
         Fetch a light cone's detail from the API.
 
@@ -322,7 +318,7 @@ class YattaAPI:
         light_cone = LightConeDetail(**data["data"])
         return light_cone
 
-    async def fetch_messages(self, use_cache: bool = True) -> List[Message]:
+    async def fetch_messages(self, use_cache: bool = True) -> list[Message]:
         """
         Fetch all messages from the API.
 
@@ -345,7 +341,7 @@ class YattaAPI:
         messages = [Message(**m) for m in data["data"]["items"].values()]
         return messages
 
-    async def fetch_message_types(self, use_cache: bool = True) -> Dict[str, str]:
+    async def fetch_message_types(self, use_cache: bool = True) -> dict[str, str]:
         """
         Fetch all message types from the API.
 
@@ -367,7 +363,7 @@ class YattaAPI:
         data = await self._request("message", use_cache=use_cache)
         return data["data"]["types"]
 
-    async def fetch_relic_sets(self, use_cache: bool = True) -> List[RelicSet]:
+    async def fetch_relic_sets(self, use_cache: bool = True) -> list[RelicSet]:
         """
         Fetch all relic sets from the API.
 
@@ -390,9 +386,7 @@ class YattaAPI:
         relics = [RelicSet(**r) for r in data["data"]["items"].values()]
         return relics
 
-    async def fetch_relic_set_detail(
-        self, id: int, use_cache: bool = True
-    ) -> RelicSetDetail:
+    async def fetch_relic_set_detail(self, id: int, use_cache: bool = True) -> RelicSetDetail:
         """
         Fetch a relic set's detail from the API.
 
@@ -413,12 +407,11 @@ class YattaAPI:
         DataNotFound
             If the requested data is not found.
         """
-        LOGGER_.debug(f"Fetching relic set detail for ID {id}")
         data = await self._request(f"relic/{id}", use_cache=use_cache)
         relic = RelicSetDetail(**data["data"])
         return relic
 
-    async def fetch_changelogs(self, use_cache: bool = True) -> List[Changelog]:
+    async def fetch_changelogs(self, use_cache: bool = True) -> list[Changelog]:
         """
         Fetch changelogs from the API.
 
@@ -438,14 +431,12 @@ class YattaAPI:
             If the requested data is not found.
         """
         data = await self._request("changelog", static=True, use_cache=use_cache)
-        change_logs: List[Changelog] = []
-        for id, log in data["data"].items():
-            change_logs.append(Changelog(id=int(id), **log))
+        change_logs: list[Changelog] = []
+        for changelog_id, log in data["data"].items():
+            change_logs.append(Changelog(id=int(changelog_id), **log))
         return change_logs
 
-    async def fetch_manual_avatar(
-        self, use_cache: bool = True
-    ) -> Dict[str, Dict[str, str]]:
+    async def fetch_manual_avatar(self, use_cache: bool = True) -> dict[str, dict[str, str]]:
         """
         Fetch the manual avatar from the API.
 
