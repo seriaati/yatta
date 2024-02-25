@@ -74,11 +74,10 @@ class YattaAPI:
         self.cache_ttl = cache_ttl
 
         self._cache = SQLiteBackend("./.cache/yatta/aiohttp-cache.db", expire_after=cache_ttl)
-        self._session = CachedSession(
-            headers=headers or {"User-Agent": "yatta-py"}, cache=self._cache
-        )
+        self._headers = headers or {"User-Agent": "yatta-py"}
 
     async def __aenter__(self) -> "YattaAPI":
+        await self.start()
         return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:  # noqa: ANN001
@@ -126,6 +125,12 @@ class YattaAPI:
         if "code" in data and data["code"] == 404:
             raise DataNotFoundError(data["data"])
         return data
+
+    async def start(self) -> None:
+        """
+        Starts the client session.
+        """
+        self._session = CachedSession(headers=self._headers, cache=self._cache)
 
     async def close(self) -> None:
         """
