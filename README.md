@@ -74,7 +74,7 @@ Currently, the `YattaAPI` class allows you to pass in 3 parameters:
 ### Language
 This will affect the languages of names of weapon, character, constellations, etc. You can find all the languages [here](https://github.com/seriaati/yatta/blob/820871827fc362b8ec1011282e665ac739c0c671/yatta/client.py#L29-L42).
 ### Headers
-Custom headers used when requesting the Enka API, it is recommended to set a user agent, the default is `{"User-Agent": "yatta-py"}`.
+Custom headers used when requesting the Yatta API, it is recommended to set a user agent, the default is `{"User-Agent": "yatta-py"}`.
 ### Cache TTL
 Default is 3600 seconds (1 hour), the cache is evicted when this time expires. Note that setting a longer TTL might result in inconsistent data.
 
