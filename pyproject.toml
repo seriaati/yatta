@@ -1,3 +1,6 @@
+[project]
+requires-python = ">=3.11"
+
 [tool.poetry]
 name = "yatta"
 version = "1.1.2"
@@ -5,12 +8,16 @@ description = "Python async API wrapper for hsr.yatta.top"
 authors = ["seriaati <seria.ati@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
+packages = [{include = "yatta"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 aiohttp = "^3.9.1"
 pydantic = "^2.5.2"
 diskcache = "^5.6.3"
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.1"
@@ -22,8 +29,29 @@ pre-commit = "^3.6.2"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.ruff.lint]
-select = ["E","F","UP","B","SIM","I"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E","W","C90","F","UP","B","SIM","I","N","TCH",
+    "ANN","ASYNC","A","C4","EM","FA","ICN","G",
+    "PIE","T20","ARG","ERA","LOG","PL","TRY"
+]
+ignore = [
+    "E501","ANN401","ANN101","ANN102","ANN003",
+    "PLR0913","PLR2004","PLR0917","PLR6301",
+    "ANN002"
+]
+preview = true
+
+[tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = ["F403"]
+"playground.*.py" = ["ALL"]
+"**/models/*.py" = ["N805"]
+"**/tests/*.py" = ["ANN001"]
+"**/client.py" = ["PLR0904", "A002"]
+
+[tool.ruff.lint.flake8-type-checking]
+quote-annotations = true
