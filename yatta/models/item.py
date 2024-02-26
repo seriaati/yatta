@@ -84,11 +84,6 @@ class ItemDetail(BaseModel):
     def _format_description(cls, v: str | None) -> str | None:
         return format_str(v) if v else None
 
-    @field_validator("story", mode="before")
-    def _format_story(cls, v: str | None) -> str | None:
-        # the str cast is a temporary fix for the API returning an int
-        return format_str(str(v)) if v else None
-
     @field_validator("sources", mode="before")
     def _convert_sources(cls, v: list[dict[str, Any]]) -> list[ItemSource]:
         return [ItemSource(**s) for s in v] if v else []
