@@ -39,16 +39,16 @@ class LightConeUpgrade(BaseModel):
     level: int
     cost_items: list[LightConeCostItem] = Field(alias="costItems")
     max_level: int = Field(alias="maxLevel")
-    level_require: int = Field(alias="playerLevelRequire")
-    world_level_require: int = Field(alias="worldLevelRequire")
+    required_player_level: int = Field(alias="playerLevelRequire")
+    required_world_level: int = Field(alias="worldLevelRequire")
     skill_base: dict[str, int | float] = Field(alias="skillBase")
     skill_add: dict[str, int | float] = Field(alias="skillAdd")
 
-    @field_validator("level_require", mode="before")
-    def _convert_level_require(cls, v: int | None) -> int:
+    @field_validator("required_player_level", mode="before")
+    def _convert_required_player_level(cls, v: int | None) -> int:
         return v or 0
 
-    @field_validator("world_level_require", mode="before")
+    @field_validator("required_world_level", mode="before")
     def _convert_world_level_require(cls, v: int | None) -> int:
         return v or 0
 

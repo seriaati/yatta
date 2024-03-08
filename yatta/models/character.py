@@ -298,11 +298,11 @@ class UpgradeItem(BaseModel):
 class CharacterUpgrade(BaseModel):
     level: int
     cost_items: list[UpgradeItem] = Field(alias="costItems")
-    new_max_level: int = Field(alias="maxLevel")
+    max_level: int = Field(alias="maxLevel")
     required_player_level: int = Field(alias="playerLevelRequire")
     required_world_level: int = Field(alias="worldLevelRequire")
-    base_stats: list[BaseStat] = Field(alias="skillBase")
-    add_stats: list[AddStat] = Field(alias="skillAdd")
+    skill_base: dict[str, int | float] = Field(alias="skillBase")
+    skill_add: dict[str, int | float] = Field(alias="skillAdd")
 
     @field_validator("cost_items", mode="before")
     def _convert_cost_items(cls, v: dict[str, int] | None) -> list[UpgradeItem]:
