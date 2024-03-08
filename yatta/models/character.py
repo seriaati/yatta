@@ -25,8 +25,6 @@ __all__ = (
     "ExtraEffect",
     "CharacterAscensionItem",
     "BaseSkill",
-    "BaseStat",
-    "AddStat",
     "VoiceActor",
     "CharacterInfo",
     "CharacterType",
@@ -280,16 +278,6 @@ class CharacterTraces(BaseModel):
         return [SkillTree(**v[s]) for s in v]
 
 
-class AddStat(BaseModel):
-    id: str
-    value: int | float
-
-
-class BaseStat(BaseModel):
-    id: str
-    value: int | float
-
-
 class UpgradeItem(BaseModel):
     id: int
     amount: int
@@ -315,14 +303,6 @@ class CharacterUpgrade(BaseModel):
     @field_validator("required_world_level", mode="before")
     def _convert_required_world_level(cls, v: int | None) -> int:
         return v if v else 0
-
-    @field_validator("base_stats", mode="before")
-    def _convert_base_stats(cls, v: dict[str, int | float]) -> list[BaseStat]:
-        return [BaseStat(id=k, value=v) for k, v in v.items()]
-
-    @field_validator("add_stats", mode="before")
-    def _convert_add_stats(cls, v: dict[str, int | float]) -> list[AddStat]:
-        return [AddStat(id=k, value=v) for k, v in v.items()]
 
 
 class VoiceActor(BaseModel):
