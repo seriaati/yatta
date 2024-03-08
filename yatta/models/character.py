@@ -278,14 +278,14 @@ class CharacterTraces(BaseModel):
         return [SkillTree(**v[s]) for s in v]
 
 
-class UpgradeItem(BaseModel):
+class CharacterCostItem(BaseModel):
     id: int
     amount: int
 
 
 class CharacterUpgrade(BaseModel):
     level: int
-    cost_items: list[UpgradeItem] = Field(alias="costItems")
+    cost_items: list[CharacterCostItem] = Field(alias="costItems")
     max_level: int = Field(alias="maxLevel")
     required_player_level: int = Field(alias="playerLevelRequire")
     required_world_level: int = Field(alias="worldLevelRequire")
@@ -293,8 +293,8 @@ class CharacterUpgrade(BaseModel):
     skill_add: dict[str, int | float] = Field(alias="skillAdd")
 
     @field_validator("cost_items", mode="before")
-    def _convert_cost_items(cls, v: dict[str, int] | None) -> list[UpgradeItem]:
-        return [UpgradeItem(id=int(k), amount=v) for k, v in v.items()] if v else []
+    def _convert_cost_items(cls, v: dict[str, int] | None) -> list[CharacterCostItem]:
+        return [CharacterCostItem(id=int(k), amount=v) for k, v in v.items()] if v else []
 
     @field_validator("required_player_level", mode="before")
     def _convert_required_player_level(cls, v: int | None) -> int:
