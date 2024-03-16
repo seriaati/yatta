@@ -5,7 +5,7 @@ from typing import Any, Final
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 
-from .exceptions import DataNotFoundError
+from .exceptions import AmbrAPIError, ConnectionTimeoutError, DataNotFoundError
 from .models import (
     Book,
     BookDetail,
@@ -117,14 +117,20 @@ class YattaAPI:
 
         if not use_cache:
             async with self._session.disabled(), self._session.get(url) as resp:
-                data = await resp.json()
+                data: dict[str, Any] = await resp.json()
         else:
             async with self._session.get(url) as resp:
-                data = await resp.json()
+                data: dict[str, Any] = await resp.json()
 
-        if "code" in data and data["code"] == 404:
-            raise DataNotFoundError(data["data"])
-        return data
+        match resp.status:
+            case 200:
+                return data
+            case 404:
+                raise DataNotFoundError
+            case 504:
+                raise ConnectionTimeoutError
+            case _:
+                raise AmbrAPIError(resp.status)
 
     async def start(self) -> None:
         """
