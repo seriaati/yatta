@@ -1,7 +1,7 @@
-__all__ = ("AmbrAPIError", "DataNotFoundError", "ConnectionTimeoutError")
+__all__ = ("YattaAPIError", "DataNotFoundError", "ConnectionTimeoutError")
 
 
-class AmbrAPIError(Exception):
+class YattaAPIError(Exception):
     def __init__(self, code: int) -> None:
         self.code = code
 
@@ -9,7 +9,7 @@ class AmbrAPIError(Exception):
         return f"An error occurred while requesting the API, status code: {self.code}"
 
 
-class DataNotFoundError(AmbrAPIError):
+class DataNotFoundError(YattaAPIError):
     def __init__(self) -> None:
         self.code = 404
 
@@ -17,7 +17,7 @@ class DataNotFoundError(AmbrAPIError):
         return "Data not found"
 
 
-class ConnectionTimeoutError(AmbrAPIError):
+class ConnectionTimeoutError(YattaAPIError):
     def __init__(self) -> None:
         self.code = 522
 

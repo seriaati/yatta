@@ -5,7 +5,7 @@ from typing import Any, Final
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 
-from .exceptions import AmbrAPIError, ConnectionTimeoutError, DataNotFoundError
+from .exceptions import ConnectionTimeoutError, DataNotFoundError, YattaAPIError
 from .models import (
     Book,
     BookDetail,
@@ -130,7 +130,7 @@ class YattaAPI:
             case 504:
                 raise ConnectionTimeoutError
             case _:
-                raise AmbrAPIError(resp.status)
+                raise YattaAPIError(resp.status)
 
     async def start(self) -> None:
         """
