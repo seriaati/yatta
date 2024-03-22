@@ -6,7 +6,7 @@ __all__ = ("PathType", "CombatType")
 class PathType(StrEnum):
     KNIGHT = "Knight"
     """Preservation"""
-    ROUGE = "Rouge"
+    ROGUE = "Rogue"
     """The Hunt"""
     MAGE = "Mage"
     """Erudition"""
