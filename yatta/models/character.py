@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
+from ..enums import CombatType, PathType
 from ..utils import format_str, replace_placeholders
 
 __all__ = (
@@ -380,8 +381,8 @@ class CharacterDetail(BaseModel):
 
 
 class CharacterType(BaseModel):
-    path_type: str = Field(alias="pathType")
-    combat_type: str = Field(alias="combatType")
+    path_type: PathType = Field(alias="pathType")
+    combat_type: CombatType = Field(alias="combatType")
 
 
 class Character(BaseModel):
