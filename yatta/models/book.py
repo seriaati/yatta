@@ -1,8 +1,9 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
 from ..utils import format_str
+from .base import BaseModel
 
 __all__ = (
     "BookSeries",
@@ -35,10 +36,6 @@ class BookDetail(BaseModel):
     description: str
     series: list[BookSeries]
 
-    @field_validator("name", mode="before")
-    def _format_name(cls, v: str) -> str:
-        return format_str(v)
-
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
@@ -55,10 +52,6 @@ class Book(BaseModel):
     chapter_count: int = Field(alias="chapterCount")
     icon: str
     route: str
-
-    @field_validator("name", mode="before")
-    def _format_name(cls, v: str) -> str:
-        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:

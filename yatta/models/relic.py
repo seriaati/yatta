@@ -1,8 +1,9 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
 from ..utils import format_str, replace_placeholders
+from .base import BaseModel
 
 __all__ = (
     "Relic",

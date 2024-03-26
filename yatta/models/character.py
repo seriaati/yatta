@@ -1,9 +1,10 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
 from ..enums import CombatType, PathType
 from ..utils import format_str, replace_placeholders
+from .base import BaseModel
 
 __all__ = (
     "Character",
@@ -173,10 +174,6 @@ class SkillListSkill(BaseModel):
     def _convert_weakness_break(cls, v: dict[str, int] | None) -> list[WeaknessBreak]:
         return [WeaknessBreak(type=k, value=v) for k, v in v.items()] if v else []
 
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str) -> str:
-        return format_str(v)
-
     @field_validator("simplified_description", mode="before")
     def _format_simplified_description(cls, v: str | None) -> str | None:
         return format_str(v) if v else None
@@ -217,10 +214,6 @@ class BaseSkill(BaseModel):
     params: dict[str, list[float]] | None
 
     promote: list[SkillPromote]
-
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str | None) -> str | None:
-        return format_str(v) if v else None
 
     @field_validator("skill_list", mode="before")
     def _convert_skill_list(cls, v: dict[str, dict[str, Any]] | None) -> list[SkillListSkill]:
@@ -316,10 +309,6 @@ class CharacterInfo(BaseModel):
     description: str
     voice_actors: list[VoiceActor] = Field(alias="cv")
 
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str) -> str:
-        return format_str(v)
-
     @field_validator("voice_actors", mode="before")
     def _convert_voice_actors(cls, v: dict[str, str] | None) -> list[VoiceActor]:
         return [VoiceActor(lang=k, name=v) for k, v in v.items()] if v else []
@@ -350,10 +339,6 @@ class CharacterDetail(BaseModel):
     eidolons: list[CharacterEidolon]
     ascension: list[CharacterAscensionItem]
     script: CharacterScript
-
-    @field_validator("name", mode="before")
-    def _format_name(cls, v: str) -> str:
-        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -393,10 +378,6 @@ class Character(BaseModel):
     types: CharacterType
     route: str
     beta: bool = Field(False)
-
-    @field_validator("name", mode="before")
-    def _format_name(cls, v: str) -> str:
-        return format_str(v)
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:

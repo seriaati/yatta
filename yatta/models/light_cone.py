@@ -1,8 +1,8 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import Field, field_validator
 
-from ..utils import format_str
+from .base import BaseModel
 
 __all__ = (
     "LightCone",
@@ -24,10 +24,6 @@ class LightConeSkill(BaseModel):
     name: str
     description: str
     params: dict[str, list[int | float]]
-
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str) -> str:
-        return format_str(v)
 
 
 class LightConeCostItem(BaseModel):
@@ -87,10 +83,6 @@ class LightConeDetail(BaseModel):
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/equipment/{v}.png"
-
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str) -> str:
-        return format_str(v)
 
     @field_validator("upgrades", mode="before")
     def _convert_upgrades(cls, v: list[dict[str, Any]]) -> list[LightConeUpgrade]:
