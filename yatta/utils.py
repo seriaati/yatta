@@ -3,7 +3,7 @@ import re
 
 def format_str(text: str) -> str:
     clean = re.compile(r"<.*?>|\{SPRITE_PRESET#[^\}]+\}")
-    return replace_pronouns(re.sub(clean, "", text).replace("\\n", "\n"))
+    return remove_ruby_tags(replace_pronouns(re.sub(clean, "", text).replace("\\n", "\n")))
 
 
 def find_next_letter(text: str, placeholder: str) -> str:
@@ -52,4 +52,12 @@ def replace_pronouns(text: str) -> str:
         text = re.sub(male_pronoun_pattern, "", text)
         text = text.replace("#", "")
 
+    return text
+
+
+def remove_ruby_tags(text: str) -> str:
+    # Remove {RUBY_E#} tags
+    text = re.sub(r"\{RUBY_E#\}", "", text)
+    # Remove {RUBY_B...} tags
+    text = re.sub(r"\{RUBY_B[^}]*\}", "", text)
     return text
