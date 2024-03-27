@@ -17,7 +17,7 @@ class BaseModel(_BaseModel):
 
     @model_validator(mode="after")
     def _format_fields(self) -> Self:
-        fields_to_format = {"name", "description"}
+        fields_to_format = {"name", "description", "story", "text"}
 
         for field_name, field_value in self.fields.items():
             if field_name in fields_to_format and isinstance(field_value, str):

@@ -2,7 +2,6 @@ from typing import Any
 
 from pydantic import Field, field_validator
 
-from ..utils import format_str
 from .base import BaseModel
 
 __all__ = (
@@ -80,10 +79,6 @@ class ItemDetail(BaseModel):
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
-
-    @field_validator("description", mode="before")
-    def _format_description(cls, v: str | None) -> str | None:
-        return format_str(v) if v else None
 
     @field_validator("sources", mode="before")
     def _convert_sources(cls, v: list[dict[str, Any]]) -> list[ItemSource]:

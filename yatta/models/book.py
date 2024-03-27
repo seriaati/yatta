@@ -2,7 +2,6 @@ from typing import Any
 
 from pydantic import Field, field_validator
 
-from ..utils import format_str
 from .base import BaseModel
 
 __all__ = (
@@ -17,10 +16,6 @@ class BookSeries(BaseModel):
     name: str
     story: str
     image_list: list[str] = Field(alias="imageList")
-
-    @field_validator("story", mode="before")
-    def _format_story(cls, v: str) -> str:
-        return format_str(v)
 
     @field_validator("image_list", mode="before")
     def _convert_image_list(cls, v: list[str] | None) -> list[str]:

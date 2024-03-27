@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import Field, field_validator
 
-from ..utils import format_str, replace_placeholders
+from ..utils import replace_placeholders
 from .base import BaseModel
 
 __all__ = (
@@ -31,7 +31,7 @@ class SetEffect(BaseModel):
     @field_validator("description", mode="before")
     def _format_description(cls, v: str, values: Any) -> str:
         params = values.data.get("params")
-        return replace_placeholders(format_str(v), params)
+        return replace_placeholders(v, params)
 
 
 class SetEffects(BaseModel):

@@ -38,10 +38,6 @@ class CharacterStory(BaseModel):
     title: str
     text: str
 
-    @field_validator("text", mode="before")
-    def _format_text(cls, v: str) -> str:
-        return format_str(v)
-
 
 class CharacterVoice(BaseModel):
     title: str
