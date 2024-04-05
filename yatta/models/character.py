@@ -7,14 +7,20 @@ from ..utils import format_str, replace_placeholders
 from .base import BaseModel
 
 __all__ = (
+    "BaseSkill",
     "Character",
+    "CharacterAscensionItem",
     "CharacterDetail",
+    "CharacterDetailTypes",
     "CharacterEidolon",
+    "CharacterInfo",
     "CharacterScript",
     "CharacterStory",
     "CharacterTraces",
+    "CharacterType",
     "CharacterUpgrade",
     "CharacterVoice",
+    "ExtraEffect",
     "SkillAdd",
     "SkillListSkill",
     "SkillPoint",
@@ -23,14 +29,8 @@ __all__ = (
     "SkillTree",
     "SkillTreeSkill",
     "Status",
-    "WeaknessBreak",
-    "ExtraEffect",
-    "CharacterAscensionItem",
-    "BaseSkill",
     "VoiceActor",
-    "CharacterInfo",
-    "CharacterType",
-    "CharacterDetailTypes",
+    "WeaknessBreak",
 )
 
 

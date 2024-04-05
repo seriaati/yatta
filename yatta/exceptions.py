@@ -1,4 +1,4 @@
-__all__ = ("YattaAPIError", "DataNotFoundError", "ConnectionTimeoutError")
+__all__ = ("ConnectionTimeoutError", "DataNotFoundError", "YattaAPIError")
 
 
 class YattaAPIError(Exception):

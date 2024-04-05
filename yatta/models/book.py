@@ -5,9 +5,9 @@ from pydantic import Field, field_validator
 from .base import BaseModel
 
 __all__ = (
-    "BookSeries",
-    "BookDetail",
     "Book",
+    "BookDetail",
+    "BookSeries",
 )
 
 

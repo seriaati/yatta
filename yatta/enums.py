@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-__all__ = ("PathType", "CombatType")
+__all__ = ("CombatType", "PathType")
 
 
 class PathType(StrEnum):

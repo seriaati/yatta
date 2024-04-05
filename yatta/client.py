@@ -21,7 +21,7 @@ from .models import (
     RelicSetDetail,
 )
 
-__all__ = ("YattaAPI", "Language")
+__all__ = ("Language", "YattaAPI")
 
 LOGGER_ = logging.getLogger("yatta.py")
 
