@@ -22,8 +22,7 @@ def replace_placeholders(
         for i, value in enumerate(params):
             placeholder = f"#i[{i}]"
             if placeholder in string:
-                if find_next_letter(string, placeholder) == "%":
-                    value_ = value * 100
+                value_ = value * 100 if find_next_letter(string, placeholder) == "%" else value
                 string = string.replace(placeholder, str(value_))
         return string
     for key, values in params.items():
