@@ -150,7 +150,7 @@ class SkillListSkill(BaseModel):
     max_level: int = Field(alias="maxLevel")
     skill_points: list[SkillPoint] = Field(alias="skillPoints")
     weakness_break: list[WeaknessBreak] = Field(alias="weaknessBreak")
-    description: str
+    description: str | None
     simplified_description: str | None = Field(alias="descriptionSimple")
 
     traces: list[int]
