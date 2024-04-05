@@ -4,7 +4,3 @@ repos:
     hooks:
       - id: ruff
       - id: ruff-format
-  - repo: https://github.com/aio-libs/sort-all
-    rev: v1.2.0
-    hooks:
-      - id: sort-all
