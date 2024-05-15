@@ -12,6 +12,15 @@ __all__ = (
 
 
 class BookSeries(BaseModel):
+    """Represents a book series.
+
+    Attributes:
+        id (int): The ID of the series.
+        name (str): The name of the series.
+        story (str): The story of the series.
+        image_list (list[str]): A list of image URLs.
+    """
+
     id: int
     name: str
     story: str
@@ -23,6 +32,18 @@ class BookSeries(BaseModel):
 
 
 class BookDetail(BaseModel):
+    """Represents a book.
+
+    Attributes:
+        id (int): The ID of the book.
+        name (str): The name of the book.
+        world_type (str): The type of world the book is in.
+        chapter_count (int): The number of chapters in the book.
+        icon (str): The URL of the book's icon.
+        description (str): The description of the book.
+        series (list[BookSeries]): A list of book series.
+    """
+
     id: int
     name: str
     world_type: str = Field(alias="worldType")
@@ -41,6 +62,17 @@ class BookDetail(BaseModel):
 
 
 class Book(BaseModel):
+    """Represents a book.
+
+    Attributes:
+        id (int): The ID of the book.
+        name (str): The name of the book.
+        world_type (int): The type of world the book is in.
+        chapter_count (int): The number of chapters in the book.
+        icon (str): The URL of the book's icon.
+        route (str): The route of the book.
+    """
+
     id: int
     name: str
     world_type: int = Field(alias="worldType")
