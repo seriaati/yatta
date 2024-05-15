@@ -1,57 +1,87 @@
 [project]
+name = "yatta-py"
 requires-python = ">=3.11"
 
 [tool.poetry]
-name = "yatta"
-version = "1.3.5"
-description = "Python async API wrapper for hsr.yatta.top"
 authors = ["seriaati <seria.ati@gmail.com>"]
+description = "Python async API wrapper for hsr.yatta.top"
 license = "GPL-3.0"
-readme = "README.md"
+name = "yatta-py"
 packages = [{include = "yatta"}]
+readme = "README.md"
+version = "1.3.5"
 
 [tool.poetry.dependencies]
-python = "^3.11"
 aiohttp = "^3.9.1"
-pydantic = "^2.5.2"
 aiohttp-client-cache = {extras = ["sqlite"], version = "^0.11.0"}
+pydantic = "^2.5.2"
+python = "^3.11"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.2"
 pytest = "^8.0.1"
 pytest-asyncio = "^0.23.5"
 ruff = "^0.4.4"
-pre-commit = "^3.6.2"
 
 [build-system]
-requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
+requires = ["poetry-core"]
 
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint]
-select = [
-    "E","W","C90","F","UP","B","SIM","I","N","TCH",
-    "ANN","ASYNC","A","C4","EM","FA","ICN","G",
-    "PIE","T20","ARG","ERA","LOG","PL","TRY","RUF022"
-]
 ignore = [
-    "E501","ANN401","ANN101","ANN102","ANN003",
-    "PLR0913","PLR2004","PLR0917","PLR6301",
-    "ANN002"
+  "E501",
+  "ANN401",
+  "ANN101",
+  "ANN102",
+  "ANN003",
+  "PLR0913",
+  "PLR2004",
+  "PLR0917",
+  "PLR6301",
+  "ANN002",
 ]
 preview = true
+select = [
+  "E",
+  "W",
+  "C90",
+  "F",
+  "UP",
+  "B",
+  "SIM",
+  "I",
+  "N",
+  "TCH",
+  "ANN",
+  "ASYNC",
+  "A",
+  "C4",
+  "EM",
+  "FA",
+  "ICN",
+  "G",
+  "PIE",
+  "T20",
+  "ARG",
+  "ERA",
+  "LOG",
+  "PL",
+  "TRY",
+  "RUF022",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = ["F403"]
-"playground.*.py" = ["ALL"]
+"**/client.py" = ["PLR0904", "A002"]
 "**/models/*.py" = ["N805", "TCH"]
 "**/tests/*.py" = ["ANN001"]
-"**/client.py" = ["PLR0904", "A002"]
+"playground.*.py" = ["ALL"]
 
 [tool.ruff.lint.flake8-type-checking]
 quote-annotations = true
