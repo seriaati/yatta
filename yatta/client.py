@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 from enum import Enum
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final, Self
 
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
@@ -20,6 +22,9 @@ from .models import (
     RelicSet,
     RelicSetDetail,
 )
+
+if TYPE_CHECKING:
+    import aiohttp
 
 __all__ = ("Language", "YattaAPI")
 
@@ -69,14 +74,16 @@ class YattaAPI:
         lang: Language = Language.EN,
         cache_ttl: int = 3600,
         headers: dict[str, Any] | None = None,
+        session: aiohttp.ClientSession | None = None,
     ) -> None:
         self.lang = lang
         self.cache_ttl = cache_ttl
 
+        self._session = session
         self._cache = SQLiteBackend("./.cache/yatta/aiohttp-cache.db", expire_after=cache_ttl)
         self._headers = headers or {"User-Agent": "yatta-py"}
 
-    async def __aenter__(self) -> "YattaAPI":
+    async def __aenter__(self) -> Self:
         await self.start()
         return self
 
@@ -108,6 +115,10 @@ class YattaAPI:
         DataNotFound
             If the requested data is not found.
         """
+        if self._session is None:
+            msg = "Call `start` before making requests."
+            raise RuntimeError(msg)
+
         if static:
             url = f"{self.BASE_URL}/static/{endpoint}"
         else:
@@ -115,7 +126,7 @@ class YattaAPI:
 
         LOGGER_.debug("Requesting %s...", url)
 
-        if not use_cache:
+        if not use_cache and isinstance(self._session, CachedSession):
             async with self._session.disabled(), self._session.get(url) as resp:
                 if resp.status != 200:
                     self._handle_error(resp.status)
@@ -144,13 +155,14 @@ class YattaAPI:
         """
         Starts the client session.
         """
-        self._session = CachedSession(headers=self._headers, cache=self._cache)
+        self._session = self._session or CachedSession(headers=self._headers, cache=self._cache)
 
     async def close(self) -> None:
         """
         Closes the client session and cache.
         """
-        await self._session.close()
+        if self._session is not None:
+            await self._session.close()
 
     async def fetch_books(self, use_cache: bool = True) -> list[Book]:
         """
