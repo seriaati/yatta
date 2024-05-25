@@ -51,19 +51,11 @@ class YattaAPI:
     """
     The main class that is used to interact with the API.
 
-    Parameters
-    ----------
-    lang : Language, optional
-        The language to use for the API. Defaults to Language.EN.
-    cache_ttl : int, optional
-        The time to live for the cache. Defaults to 3600.
-
-    Attributes
-    ----------
-    BASE_URL : str
-        The base URL for the API. This is used internally.
-    lang : Language
-        The language that is used for the API.
+    Parameters:
+        lang: The language to use for the API. Defaults to Language.EN.
+        cache_ttl: The time-to-live for the cache in seconds. Defaults to 3600.
+        headers: A dictionary of headers to use for the requests. Defaults to None.
+        session: An aiohttp.ClientSession to use for the requests. Defaults to None.
     """
 
     BASE_URL: Final[str] = "https://api.yatta.top/hsr/v2"
