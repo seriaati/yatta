@@ -1,3 +1,4 @@
+import datetime
 from typing import Any
 
 from pydantic import Field, field_validator
@@ -335,6 +336,7 @@ class CharacterDetail(BaseModel):
     eidolons: list[CharacterEidolon]
     ascension: list[CharacterAscensionItem]
     script: CharacterScript
+    release_at: datetime.datetime | None = Field(None, alias="release")
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
@@ -347,6 +349,10 @@ class CharacterDetail(BaseModel):
     @field_validator("ascension", mode="before")
     def _convert_ascension(cls, v: dict[str, int]) -> list[CharacterAscensionItem]:
         return [CharacterAscensionItem(id=int(k), amount=v) for k, v in v.items()]
+
+    @field_validator("release_at", mode="before")
+    def _convert_release_at(cls, v: int | None) -> datetime.datetime | None:
+        return datetime.datetime.fromtimestamp(v) if v else None
 
     @property
     def medium_icon(self) -> str:
@@ -374,10 +380,15 @@ class Character(BaseModel):
     types: CharacterType
     route: str
     beta: bool = Field(False)
+    release_at: datetime.datetime | None = Field(None, alias="release")
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
+
+    @field_validator("release_at", mode="before")
+    def _convert_release_at(cls, v: int | None) -> datetime.datetime | None:
+        return datetime.datetime.fromtimestamp(v) if v else None
 
     @property
     def medium_icon(self) -> str:
