@@ -45,8 +45,7 @@ asyncio.run(main())
 
 Read the [wiki](https://github.com/seriaati/yatta/wiki) to learn more about on how to use this wrapper.
 
-## Questions, Issues, Contributions
+## Questions, Issues, Feedback, Contributions
 
-For questions, you can contact me on [Discord](https://discord.com/users/410036441129943050) or open an [issue](https://github.com/seriaati/yatta/issues).  
-To report issues with this wrapper, open an [issue](https://github.com/seriaati/yatta/issues).  
-To contribute, fork this repo and submit a [pull request](https://github.com/seriaati/yatta/pulls).
+Whether you want to make any bug reports, feature requests, or contribute to the wrapper, simply open an issue or pull request in this repository.  
+If GitHub is not your type, you can find me on [Discord](https://discord.com/invite/b22kMKuwbS), my username is @seria_ati.
