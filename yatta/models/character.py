@@ -95,7 +95,7 @@ class CharacterEidolon(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/skill/{v}.png"
 
 
 class SkillPromoteCostItem(BaseModel):
@@ -123,7 +123,7 @@ class Status(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/status/{v}.png"
 
 
 class ExtraEffect(BaseModel):
@@ -189,7 +189,7 @@ class SkillListSkill(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/skill/{v}.png"
 
 
 class BaseSkill(BaseModel):
@@ -223,8 +223,8 @@ class BaseSkill(BaseModel):
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
         if "SkillIcon" in v:
-            return f"https://api.yatta.top/hsr/assets/UI/skill/{v}.png"
-        return f"https://api.yatta.top/hsr/assets/UI/status/{v}.png"
+            return f"https://sr.yatta.moe/hsr/assets/UI/skill/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/status/{v}.png"
 
     @field_validator("promote", mode="before")
     def _convert_promote(cls, v: dict[str, dict[str, dict[str, int] | None]]) -> list[SkillPromote]:
@@ -340,7 +340,7 @@ class CharacterDetail(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/avatar/{v}.png"
 
     @field_validator("eidolons", mode="before")
     def _convert_eidolons(cls, v: dict[str, dict[str, Any]]) -> list[CharacterEidolon]:
@@ -384,7 +384,7 @@ class Character(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/avatar/{v}.png"
 
     @field_validator("release_at", mode="before")
     def _convert_release_at(cls, v: int | None) -> datetime.datetime | None:

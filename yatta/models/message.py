@@ -13,7 +13,7 @@ class Contact(BaseModel):
 
     @field_validator("icon", mode="before")
     def convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/avatar/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/avatar/{v}.png"
 
 
 class Message(BaseModel):

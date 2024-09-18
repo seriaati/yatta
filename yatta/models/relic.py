@@ -21,7 +21,7 @@ class Relic(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/relic/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/relic/{v}.png"
 
 
 class SetEffect(BaseModel):
@@ -53,7 +53,7 @@ class RelicSetDetail(BaseModel):
 
     @field_validator("icon", mode="before")
     def convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/relic/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/relic/{v}.png"
 
     @field_validator("relics", mode="before")
     def convert_relics(cls, v: dict[str, dict[str, Any]]) -> list[Relic]:
@@ -71,4 +71,4 @@ class RelicSet(BaseModel):
 
     @field_validator("icon", mode="before")
     def convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/relic/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/relic/{v}.png"

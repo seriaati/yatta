@@ -22,7 +22,7 @@ class RecipeMaterial(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/item/{v}.png"
 
 
 class Recipe(BaseModel):
@@ -78,7 +78,7 @@ class ItemDetail(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/item/{v}.png"
 
     @field_validator("sources", mode="before")
     def _convert_sources(cls, v: list[dict[str, Any]]) -> list[ItemSource]:
@@ -97,4 +97,4 @@ class Item(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/item/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/item/{v}.png"

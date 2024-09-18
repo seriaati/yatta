@@ -58,7 +58,7 @@ class YattaAPI:
         session: An aiohttp.ClientSession to use for the requests. Defaults to None.
     """
 
-    BASE_URL: Final[str] = "https://api.yatta.top/hsr/v2"
+    BASE_URL: Final[str] = "https://sr.yatta.moe/api/v2"
 
     def __init__(
         self,

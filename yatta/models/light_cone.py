@@ -82,7 +82,7 @@ class LightConeDetail(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/equipment/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/equipment/{v}.png"
 
     @field_validator("upgrades", mode="before")
     def _convert_upgrades(cls, v: list[dict[str, Any]]) -> list[LightConeUpgrade]:
@@ -113,7 +113,7 @@ class LightCone(BaseModel):
 
     @field_validator("icon", mode="before")
     def _convert_icon(cls, v: str) -> str:
-        return f"https://api.yatta.top/hsr/assets/UI/equipment/{v}.png"
+        return f"https://sr.yatta.moe/hsr/assets/UI/equipment/{v}.png"
 
     @field_validator("type", mode="before")
     def _convert_type(cls, v: dict[str, str]) -> str:
