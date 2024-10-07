@@ -1,89 +1,34 @@
 [project]
-name = "yatta-py"
+name = "yatta"
+description = "Async API wrapper for Project Yatta (sr.yatta.moe) written in Python"
+readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "aiohttp-client-cache[sqlite]>=0.12.3",
+    "aiohttp>=3.10.9",
+    "pydantic>=2.9.2",
+]
+authors = [{ "name" = "seriaati", "email" = "seria.ati@gmail.com" }]
+license = { file = "LICENSE" }
 
 [project.urls]
-"Bug Tracker" = "https://github.com/seriaati/yatta/issues"
+Homepage = "https://github.com/seriaati/yatta"
 Repository = "https://github.com/seriaati/yatta.git"
-
-[tool.poetry]
-authors = ["seriaati <seria.ati@gmail.com>"]
-description = "Python async API wrapper for hsr.yatta.top"
-license = "GPL-3.0"
-name = "yatta-py"
-packages = [{include = "yatta"}]
-readme = "README.md"
-version = "1.3.9"
-
-[tool.poetry.dependencies]
-aiohttp = "^3.9.1"
-aiohttp-client-cache = {extras = ["sqlite"], version = "^0.12.0"}
-pydantic = "^2.5.2"
-python = "^3.11"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.0.1"
-pytest-asyncio = "^0.24.0"
+Issues = "https://github.com/seriaati/yatta/issues"
 
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.ruff]
-line-length = 100
+[tool.hatch.build.targets.wheel]
+packages = ["yatta"]
 
-[tool.ruff.lint]
-ignore = [
-  "E501",
-  "ANN401",
-  "ANN101",
-  "ANN102",
-  "ANN003",
-  "PLR0913",
-  "PLR2004",
-  "PLR0917",
-  "PLR6301",
-  "ANN002",
-]
-preview = true
-select = [
-  "E",
-  "W",
-  "C90",
-  "F",
-  "UP",
-  "B",
-  "SIM",
-  "I",
-  "N",
-  "TCH",
-  "ANN",
-  "ASYNC",
-  "A",
-  "C4",
-  "EM",
-  "FA",
-  "ICN",
-  "G",
-  "PIE",
-  "T20",
-  "ARG",
-  "ERA",
-  "LOG",
-  "PL",
-  "TRY",
-  "RUF022",
-]
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
-[tool.ruff.lint.per-file-ignores]
-"**/__init__.py" = ["F403"]
-"**/client.py" = ["PLR0904", "A002"]
-"**/models/*.py" = ["N805", "TCH"]
-"**/tests/*.py" = ["ANN001"]
-"playground.*.py" = ["ALL"]
+[tool.pyright]
+typeCheckingMode = "standard"
 
-[tool.ruff.lint.flake8-type-checking]
-quote-annotations = true
+[tool.uv]
+dev-dependencies = ["pytest-asyncio>=0.24.0", "pytest>=8.3.3"]
