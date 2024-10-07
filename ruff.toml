@@ -1,4 +1,5 @@
 line-length = 100
+target-version = "py311"
 
 [lint]
 ignore = [
@@ -50,5 +51,13 @@ select = [
 "**/tests/*.py" = ["ANN001"]
 "playground.*.py" = ["ALL"]
 
+[lint.isort]
+required-imports = ["from __future__ import annotations"]
+split-on-trailing-comma = false
+
 [lint.flake8-type-checking]
 quote-annotations = true
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
+[format]
+skip-magic-trailing-comma = true
