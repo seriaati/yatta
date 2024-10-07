@@ -1,17 +1,12 @@
+from __future__ import annotations
+
 from typing import Any
 
 from pydantic import Field, field_validator
 
 from .base import BaseModel
 
-__all__ = (
-    "Item",
-    "ItemDetail",
-    "ItemSource",
-    "ItemType",
-    "Recipe",
-    "RecipeMaterial",
-)
+__all__ = ("Item", "ItemDetail", "ItemSource", "ItemType", "Recipe", "RecipeMaterial")
 
 
 class RecipeMaterial(BaseModel):

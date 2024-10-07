@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .book import *
 from .change_log import *
 from .character import *

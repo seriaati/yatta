@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from pydantic import Field, field_validator
@@ -5,11 +7,7 @@ from pydantic import Field, field_validator
 from ..utils import replace_placeholders
 from .base import BaseModel
 
-__all__ = (
-    "Relic",
-    "RelicSet",
-    "RelicSetDetail",
-)
+__all__ = ("Relic", "RelicSet", "RelicSetDetail")
 
 
 class Relic(BaseModel):
