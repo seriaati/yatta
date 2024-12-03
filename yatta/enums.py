@@ -20,6 +20,8 @@ class PathType(StrEnum):
     """Harmony"""
     PRIEST = "Priest"
     """Abundance"""
+    MEMORY = "Memory"
+    """Remembrance"""
 
 
 class CombatType(StrEnum):
