@@ -33,8 +33,8 @@ class SetEffect(BaseModel):
 
 
 class SetEffects(BaseModel):
-    two_piece: SetEffect = Field(alias="2")
-    four_piece: SetEffect | None = Field(None, alias="4")
+    two_piece: SetEffect = Field(alias="2")  # pyright: ignore[reportGeneralTypeIssues]
+    four_piece: SetEffect | None = Field(None, alias="4")  # pyright: ignore[reportGeneralTypeIssues]
 
 
 class RelicSetDetail(BaseModel):
