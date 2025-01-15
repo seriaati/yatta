@@ -165,6 +165,10 @@ class SkillListSkill(BaseModel):
 
     params: dict[str, list[float]] | None
 
+    @field_validator("type", mode="before")
+    def __convert_type(cls, v: Any) -> str:
+        return str(v)
+
     @field_validator("skill_points", mode="before")
     def _convert_skill_points(cls, v: dict[str, int | None]) -> list[SkillPoint]:
         return [SkillPoint(type=k, value=v) for k, v in v.items()]
