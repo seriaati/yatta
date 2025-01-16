@@ -8,6 +8,8 @@ dependencies = [
     "aiohttp-client-cache[sqlite]>=0.12.3",
     "aiohttp>=3.10.9",
     "pydantic>=2.9.2",
+    "loguru>=0.7.3",
+    "aiofiles>=24.1.0",
 ]
 authors = [{ "name" = "seriaati", "email" = "seria.ati@gmail.com" }]
 license = { file = "LICENSE" }

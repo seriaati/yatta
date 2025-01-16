@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-import logging
+import pathlib
+import time
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Final, Self
 
+import aiofiles
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
+from loguru import logger
 
 from .exceptions import ConnectionTimeoutError, DataNotFoundError, YattaAPIError
 from .models import (
@@ -28,7 +31,7 @@ if TYPE_CHECKING:
 
 __all__ = ("Language", "YattaAPI")
 
-LOGGER_ = logging.getLogger("yatta.py")
+CACHE_PATH = pathlib.Path("./.cache/yatta")
 
 
 class Language(Enum):
@@ -108,7 +111,7 @@ class YattaAPI:
             If the requested data is not found.
         """
         if self._session is None:
-            msg = "Call `start` before making requests."
+            msg = f"Call `{self.__class__.__name__}.start` before making requests."
             raise RuntimeError(msg)
 
         if static:
@@ -116,7 +119,15 @@ class YattaAPI:
         else:
             url = f"{self.BASE_URL}/{self.lang.value}/{endpoint}"
 
-        LOGGER_.debug("Requesting %s...", url)
+        if endpoint != "version":
+            version = await self._get_version()
+            if version is None:
+                logger.debug("Version not found or outdated, fetching latest version.")
+                version = await self.fetch_latest_version()
+                await self._save_version(version)
+            url += f"?vh={version}"
+
+        logger.debug(f"Requesting {url}")
 
         if not use_cache and isinstance(self._session, CachedSession):
             async with self._session.disabled(), self._session.get(url) as resp:
@@ -487,3 +498,24 @@ class YattaAPI:
         """
         data = await self._request("manualAvatar", use_cache=use_cache)
         return data["data"]
+
+    async def _save_version(self, version: str) -> None:
+        CACHE_PATH.mkdir(parents=True, exist_ok=True)
+        async with aiofiles.open(CACHE_PATH / "version.txt", "w") as f:
+            await f.write(f"{version},{time.time()}")
+
+    async def _get_version(self) -> str | None:
+        try:
+            async with aiofiles.open(CACHE_PATH / "version.txt") as f:
+                data = await f.read()
+                version, timestamp = data.split(",")
+                if time.time() - float(timestamp) > 60 * 60 * 24:  # 24 hours
+                    return None
+                return version
+        except (FileNotFoundError, ValueError):
+            return None
+
+    async def fetch_latest_version(self) -> str:
+        data = await self._request("version", static=True, use_cache=False)
+        version = data["data"]["vh"]
+        return version
