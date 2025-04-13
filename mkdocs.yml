@@ -1,0 +1,62 @@
+# Project information
+site_name: yatta
+site_url: https://seria.is-a.dev/yatta
+site_author: Seria Ati
+site_description: An async API wrapper for Project Yatta (sr.yatta.moe) written in Python.
+
+# Repository
+repo_name: seriaati/yatta
+repo_url: https://github.com/seriaati/yatta
+
+# Copyright
+copyright: Copyright &copy; 2025 - 2025 Seria Ati
+
+# Configuration
+theme:
+  name: material
+  features:
+    - navigation.tabs
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+      primary: deep purple
+      accent: deep purple
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+      primary: deep purple
+      accent: deep purple
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+      primary: deep purple
+      accent: deep purple
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - API Reference:
+      - Client: client.md
+      - Models: models.md
+      - Exceptions: exceptions.md
+      - Enums: enums.md
+      - Utils: utils.md

@@ -9,19 +9,20 @@ from ..utils import format_str
 
 
 class BaseModel(_BaseModel):
+    """Base model for all data models, providing common functionality."""
+
     @property
     def fields(self) -> dict[str, Any]:
         """Return all fields of the model as a dictionary."""
-        schema = self.model_fields
+        schema = BaseModel.model_fields
         field_names = schema.keys()
-        field_values = {name: getattr(self, name) for name in field_names}
-        return field_values
+        return {name: getattr(self, name) for name in field_names}
 
     @model_validator(mode="after")
-    def _format_fields(self) -> Self:
+    def __format_fields(self) -> Self:
         fields_to_format = {"name", "description", "story", "text"}
 
-        for field_name, field_value in self.fields.items():
+        for field_name, field_value in self.model_dump().items():
             if field_name in fields_to_format and isinstance(field_value, str):
                 setattr(self, field_name, format_str(field_value))
 

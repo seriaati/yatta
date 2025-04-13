@@ -4,12 +4,28 @@ import re
 
 
 def format_str(text: str) -> str:
+    """Format a string by removing HTML tags, sprite presets, and ruby tags, and replacing pronouns.
+
+    Args:
+        text: The input string to format.
+
+    Returns:
+        The formatted string.
+    """
     clean = re.compile(r"<.*?>|\{SPRITE_PRESET#[^\}]+\}")
     return remove_ruby_tags(replace_pronouns(re.sub(clean, "", text).replace("\\n", "\n")))
 
 
 def find_next_letter(text: str, placeholder: str) -> str:
-    """Find the next letter after a placeholder in a string"""
+    """Find the next letter after a placeholder in a string.
+
+    Args:
+        text: The string to search within.
+        placeholder: The placeholder string to find.
+
+    Returns:
+        The character immediately following the placeholder.
+    """
     index = text.find(placeholder)
     index += len(placeholder)
     return text[index]
@@ -18,6 +34,18 @@ def find_next_letter(text: str, placeholder: str) -> str:
 def replace_placeholders(
     string: str, params: dict[str, list[float | int]] | list[int] | None
 ) -> str:
+    """Replace placeholders in a string with values from parameters.
+
+    Handle both list-based and dictionary-based parameters.
+    Multiply values by 100 if the character following the placeholder is '%'.
+
+    Args:
+        string: The string containing placeholders.
+        params: A dictionary or list of parameters to substitute.
+
+    Returns:
+        The string with placeholders replaced by values.
+    """
     if params is None:
         return string
     if isinstance(params, list):
@@ -38,6 +66,17 @@ def replace_placeholders(
 
 
 def replace_pronouns(text: str) -> str:
+    """Replace gendered pronouns in the format {F#female}/{M#male} with a combined format.
+
+    Example:
+        "{F#She}/{M#He} is here." -> "She/He is here."
+
+    Args:
+        text: The input string containing pronouns.
+
+    Returns:
+        The string with pronouns replaced.
+    """
     female_pronoun_pattern = r"\{F#(.*?)\}"
     male_pronoun_pattern = r"\{M#(.*?)\}"
 
@@ -57,8 +96,15 @@ def replace_pronouns(text: str) -> str:
 
 
 def remove_ruby_tags(text: str) -> str:
+    """Remove ruby tags ({RUBY_B...} and {RUBY_E#}) from a string.
+
+    Args:
+        text: The input string containing ruby tags.
+
+    Returns:
+        The string with ruby tags removed.
+    """
     # Remove {RUBY_E#} tags
     text = re.sub(r"\{RUBY_E#\}", "", text)
     # Remove {RUBY_B...} tags
-    text = re.sub(r"\{RUBY_B[^}]*\}", "", text)
-    return text
+    return re.sub(r"\{RUBY_B[^}]*\}", "", text)

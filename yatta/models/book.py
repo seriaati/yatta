@@ -10,13 +10,13 @@ __all__ = ("Book", "BookDetail", "BookSeries")
 
 
 class BookSeries(BaseModel):
-    """Represents a book series.
+    """Represent a book series.
 
     Attributes:
-        id (int): The ID of the series.
-        name (str): The name of the series.
-        story (str): The story of the series.
-        image_list (list[str]): A list of image URLs.
+        id: The ID of the series.
+        name: The name of the series.
+        story: The story or description of the series.
+        image_list: A list of image URLs associated with the series.
     """
 
     id: int
@@ -25,21 +25,22 @@ class BookSeries(BaseModel):
     image_list: list[str] = Field(alias="imageList")
 
     @field_validator("image_list", mode="before")
-    def _convert_image_list(cls, v: list[str] | None) -> list[str]:
-        return v if v else []
+    @classmethod
+    def __convert_image_list(cls, v: list[str] | None) -> list[str]:
+        return v or []
 
 
 class BookDetail(BaseModel):
-    """Represents a book.
+    """Represent detailed information about a book.
 
     Attributes:
-        id (int): The ID of the book.
-        name (str): The name of the book.
-        world_type (str): The type of world the book is in.
-        chapter_count (int): The number of chapters in the book.
-        icon (str): The URL of the book's icon.
-        description (str): The description of the book.
-        series (list[BookSeries]): A list of book series.
+        id: The ID of the book.
+        name: The name of the book.
+        world_type: The type of world the book is associated with.
+        chapter_count: The number of chapters in the book.
+        icon: The URL of the book's icon.
+        description: The description of the book.
+        series: A list of book series entries contained within this book.
     """
 
     id: int
@@ -51,24 +52,26 @@ class BookDetail(BaseModel):
     series: list[BookSeries]
 
     @field_validator("icon", mode="before")
-    def _convert_icon(cls, v: str) -> str:
+    @classmethod
+    def __convert_icon(cls, v: str) -> str:
         return f"https://sr.yatta.moe/hsr/assets/UI/item/{v}.png"
 
     @field_validator("series", mode="before")
-    def _convert_series(cls, v: dict[str, dict[str, Any]]) -> list[BookSeries]:
+    @classmethod
+    def __convert_series(cls, v: dict[str, dict[str, Any]]) -> list[BookSeries]:
         return [BookSeries(id=int(series_id), **s) for series_id, s in v.items()]
 
 
 class Book(BaseModel):
-    """Represents a book.
+    """Represent basic information about a book.
 
     Attributes:
-        id (int): The ID of the book.
-        name (str): The name of the book.
-        world_type (int): The type of world the book is in.
-        chapter_count (int): The number of chapters in the book.
-        icon (str): The URL of the book's icon.
-        route (str): The route of the book.
+        id: The ID of the book.
+        name: The name of the book.
+        world_type: The numeric ID representing the type of world the book is associated with.
+        chapter_count: The number of chapters in the book.
+        icon: The URL of the book's icon.
+        route: The API route for this book.
     """
 
     id: int
@@ -79,5 +82,6 @@ class Book(BaseModel):
     route: str
 
     @field_validator("icon", mode="before")
-    def _convert_icon(cls, v: str) -> str:
+    @classmethod
+    def __convert_icon(cls, v: str) -> str:
         return f"https://sr.yatta.moe/hsr/assets/UI/item/{v}.png"

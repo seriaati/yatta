@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import pathlib
 import time
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Final, Self
 
 import aiofiles
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from loguru import logger
+
+from yatta.enums import Language
 
 from .exceptions import ConnectionTimeoutError, DataNotFoundError, YattaAPIError
 from .models import (
@@ -29,36 +30,23 @@ from .models import (
 if TYPE_CHECKING:
     import aiohttp
 
-__all__ = ("Language", "YattaAPI")
+__all__ = ("YattaAPI",)
 
 CACHE_PATH = pathlib.Path("./.cache/yatta")
 
 
-class Language(Enum):
-    CHT = "cht"
-    CN = "cn"
-    DE = "de"
-    EN = "en"
-    ES = "es"
-    FR = "fr"
-    ID = "id"
-    JP = "jp"
-    KR = "kr"
-    PT = "pt"
-    RU = "ru"
-    TH = "th"
-    VI = "vi"
-
-
 class YattaAPI:
-    """
-    The main class that is used to interact with the API.
+    """The main class to interact with the Project Yatta API.
 
-    Parameters:
-        lang: The language to use for the API. Defaults to Language.EN.
-        cache_ttl: The time-to-live for the cache in seconds. Defaults to 3600.
-        headers: A dictionary of headers to use for the requests. Defaults to None.
-        session: An aiohttp.ClientSession to use for the requests. Defaults to None.
+    Provide asynchronous methods to fetch various game data like characters,
+    light cones, relics, items, etc. Support caching via aiohttp-client-cache.
+
+    Args:
+        lang: The language to use for API responses. Defaults to Language.EN.
+        cache_ttl: The time-to-live for the cache in seconds. Defaults to 3600 (1 hour).
+        headers: Optional dictionary of headers to include in requests.
+        session: Optional existing aiohttp.ClientSession to use. If None, a new
+                 CachedSession will be created.
     """
 
     BASE_URL: Final[str] = "https://sr.yatta.moe/api/v2"
@@ -88,27 +76,23 @@ class YattaAPI:
     async def _request(
         self, endpoint: str, *, static: bool = False, use_cache: bool
     ) -> dict[str, Any]:
-        """
-        A helper function to make requests to the API.
+        """Make an asynchronous request to the specified API endpoint.
 
-        Parameters
-        ----------
-        endpoint : str
-            The endpoint to request from.
-        static : bool, optional
-            Whether to use the static endpoint or not. Defaults to False.
-        use_cache : bool
-            Whether to use the cache or not
+        Handle adding the language path, version hash, and error checking.
 
-        Returns
-        -------
-        Dict[str, Any]
-            The response from the API.
+        Args:
+            endpoint: The API endpoint path (e.g., "avatar", "equipment/12345").
+            static: If True, request the static endpoint without language prefix. Defaults to False.
+            use_cache: Whether to allow the request to be served from cache.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Returns:
+            The JSON response data as a dictionary.
+
+        Raises:
+            RuntimeError: If the session hasn't been started via `start()`.
+            DataNotFoundError: If the API returns a 404 status.
+            ConnectionTimeoutError: If the API returns a 522 status.
+            YattaAPIError: For other non-200 status codes.
         """
         if self._session is None:
             msg = f"Call `{self.__class__.__name__}.start` before making requests."
@@ -143,8 +127,15 @@ class YattaAPI:
         return data
 
     def _handle_error(self, code: int) -> None:
-        """
-        A helper function to handle errors.
+        """Raise appropriate exceptions based on HTTP status code.
+
+        Args:
+            code: The HTTP status code received from the API.
+
+        Raises:
+            DataNotFoundError: For 404 errors.
+            ConnectionTimeoutError: For 522 errors.
+            YattaAPIError: For other non-200 errors.
         """
         match code:
             case 404:
@@ -155,321 +146,229 @@ class YattaAPI:
                 raise YattaAPIError(code)
 
     async def start(self) -> None:
-        """
-        Starts the client session.
+        """Initialize the internal aiohttp session.
+
+        Must be called before making any API requests if not using `async with`.
         """
         self._session = self._session or CachedSession(headers=self._headers, cache=self._cache)
 
     async def close(self) -> None:
-        """
-        Closes the client session and cache.
+        """Close the internal aiohttp session.
+
+        Should be called to release resources if not using `async with`.
         """
         if self._session is not None:
             await self._session.close()
 
     async def fetch_books(self, use_cache: bool = True) -> list[Book]:
-        """
-        Fetch all books from the API.
+        """Fetch a list of all available books.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[Book]
+        Returns:
             A list of Book objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the book list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("book", use_cache=use_cache)
-        books = [Book(**b) for b in data["data"]["items"].values()]
-        return books
+        return [Book(**b) for b in data["data"]["items"].values()]
 
     async def fetch_book_detail(self, id: int, use_cache: bool = True) -> BookDetail:
-        """
-        Fetch a book's detail from the API.
+        """Fetch detailed information for a specific book.
 
-        Parameters
-        ----------
-        id : int
-            The ID of the book to fetch.
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            id: The unique identifier of the book.
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        BookDetail
-            A BookDetail object.
+        Returns:
+            A BookDetail object containing detailed book information.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If no book with the given ID is found.
+            YattaAPIError: For other API errors.
         """
         data = await self._request(f"book/{id}", use_cache=use_cache)
-        book = BookDetail(**data["data"])
-        return book
+        return BookDetail(**data["data"])
 
     async def fetch_characters(self, use_cache: bool = True) -> list[Character]:
-        """
-        Fetch all characters from the API.
+        """Fetch a list of all available characters.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[Character]
+        Returns:
             A list of Character objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the character list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("avatar", use_cache=use_cache)
-        characters = [Character(**c) for c in data["data"]["items"].values()]
-        return characters
+        return [Character(**c) for c in data["data"]["items"].values()]
 
     async def fetch_character_detail(self, id: int, use_cache: bool = True) -> CharacterDetail:
-        """
-        Fetch a character's detail from the API.
+        """Fetch detailed information for a specific character.
 
-        Parameters
-        ----------
-        id : int
-            The ID of the character to fetch.
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            id: The unique identifier of the character.
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        CharacterDetail
-            A CharacterDetail object.
+        Returns:
+            A CharacterDetail object containing detailed character information.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If no character with the given ID is found.
+            YattaAPIError: For other API errors.
         """
         data = await self._request(f"avatar/{id}", use_cache=use_cache)
-        character = CharacterDetail(**data["data"])
-        return character
+        return CharacterDetail(**data["data"])
 
     async def fetch_items(self, use_cache: bool = True) -> list[Item]:
-        """
-        Fetch all items from the API.
+        """Fetch a list of all available items.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[Item]
+        Returns:
             A list of Item objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the item list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("item", use_cache=use_cache)
-        items = [Item(**i) for i in data["data"]["items"].values()]
-        return items
+        return [Item(**i) for i in data["data"]["items"].values()]
 
     async def fetch_item_detail(self, id: int, use_cache: bool = True) -> ItemDetail:
-        """
-        Fetch an item's detail from the API.
+        """Fetch detailed information for a specific item.
 
-        Parameters
-        ----------
-        id : int
-            The ID of the item to fetch.
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            id: The unique identifier of the item.
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        ItemDetail
-            An ItemDetail object.
+        Returns:
+            An ItemDetail object containing detailed item information.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If no item with the given ID is found.
+            YattaAPIError: For other API errors.
         """
         data = await self._request(f"item/{id}", use_cache=use_cache)
-        item = ItemDetail(**data["data"])
-        return item
+        return ItemDetail(**data["data"])
 
     async def fetch_light_cones(self, use_cache: bool = True) -> list[LightCone]:
-        """
-        Fetch all light cones from the API.
+        """Fetch a list of all available light cones.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[LightCone]
+        Returns:
             A list of LightCone objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the light cone list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("equipment", use_cache=use_cache)
-        light_cones = [LightCone(**lc) for lc in data["data"]["items"].values()]
-        return light_cones
+        return [LightCone(**lc) for lc in data["data"]["items"].values()]
 
     async def fetch_light_cone_detail(self, id: int, use_cache: bool = True) -> LightConeDetail:
-        """
-        Fetch a light cone's detail from the API.
+        """Fetch detailed information for a specific light cone.
 
-        Parameters
-        ----------
-        id : int
-            The ID of the light cone to fetch.
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            id: The unique identifier of the light cone.
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        LightConeDetail
-            A LightConeDetail object.
+        Returns:
+            A LightConeDetail object containing detailed light cone information.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If no light cone with the given ID is found.
+            YattaAPIError: For other API errors.
         """
         data = await self._request(f"equipment/{id}", use_cache=use_cache)
-        light_cone = LightConeDetail(**data["data"])
-        return light_cone
+        return LightConeDetail(**data["data"])
 
     async def fetch_messages(self, use_cache: bool = True) -> list[Message]:
-        """
-        Fetch all messages from the API.
+        """Fetch a list of all available message threads.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[Message]
+        Returns:
             A list of Message objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the message list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("message", use_cache=use_cache)
-        messages = [Message(**m) for m in data["data"]["items"].values()]
-        return messages
+        return [Message(**m) for m in data["data"]["items"].values()]
 
     async def fetch_message_types(self, use_cache: bool = True) -> dict[str, str]:
-        """
-        Fetch all message types from the API.
+        """Fetch a mapping of message type IDs to their names.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[str]
-            A list of message types.
+        Returns:
+            A dictionary where keys are message type IDs (as strings) and values are type names.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the message endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("message", use_cache=use_cache)
         return data["data"]["types"]
 
     async def fetch_relic_sets(self, use_cache: bool = True) -> list[RelicSet]:
-        """
-        Fetch all relic sets from the API.
+        """Fetch a list of all available relic sets.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[RelicSet]
+        Returns:
             A list of RelicSet objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the relic list endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("relic", use_cache=use_cache)
-        relics = [RelicSet(**r) for r in data["data"]["items"].values()]
-        return relics
+        return [RelicSet(**r) for r in data["data"]["items"].values()]
 
     async def fetch_relic_set_detail(self, id: int, use_cache: bool = True) -> RelicSetDetail:
-        """
-        Fetch a relic set's detail from the API.
+        """Fetch detailed information for a specific relic set.
 
-        Parameters
-        ----------
-        id : int
-            The ID of the relic set to fetch.
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            id: The unique identifier of the relic set.
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        RelicSetDetail
-            A RelicSetDetail object.
+        Returns:
+            A RelicSetDetail object containing detailed relic set information.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If no relic set with the given ID is found.
+            YattaAPIError: For other API errors.
         """
         data = await self._request(f"relic/{id}", use_cache=use_cache)
-        relic = RelicSetDetail(**data["data"])
-        return relic
+        return RelicSetDetail(**data["data"])
 
     async def fetch_changelogs(self, use_cache: bool = True) -> list[Changelog]:
-        """
-        Fetch changelogs from the API.
+        """Fetch a list of all available changelogs.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        List[Changelog]
+        Returns:
             A list of Changelog objects.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the changelog endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("changelog", static=True, use_cache=use_cache)
         change_logs: list[Changelog] = []
@@ -478,23 +377,17 @@ class YattaAPI:
         return change_logs
 
     async def fetch_manual_avatar(self, use_cache: bool = True) -> dict[str, dict[str, str]]:
-        """
-        Fetch the manual avatar from the API.
+        """Fetch manual avatar data, typically used for stat mappings.
 
-        Parameters
-        ----------
-        use_cache : bool, optional
-            Whether to use the cache or not. Defaults to True.
+        Args:
+            use_cache: Whether to allow the response to be served from cache. Defaults to True.
 
-        Returns
-        -------
-        Dict[str, Dict[str, str]]
-            A dictionary of avatar stat keys to their corresponding names and icons.
+        Returns:
+            A dictionary containing manual avatar data, often mapping stat keys to names and icons.
 
-        Raises
-        ------
-        DataNotFound
-            If the requested data is not found.
+        Raises:
+            DataNotFoundError: If the manual avatar endpoint returns 404.
+            YattaAPIError: For other API errors.
         """
         data = await self._request("manualAvatar", use_cache=use_cache)
         return data["data"]
@@ -516,6 +409,15 @@ class YattaAPI:
             return None
 
     async def fetch_latest_version(self) -> str:
+        """Fetch the latest data version hash from the API.
+
+        This bypasses the regular cache to ensure the absolute latest version is retrieved.
+
+        Returns:
+            The latest version hash string.
+
+        Raises:
+            YattaAPIError: For API errors during the fetch.
+        """
         data = await self._request("version", static=True, use_cache=False)
-        version = data["data"]["vh"]
-        return version
+        return data["data"]["vh"]
