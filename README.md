@@ -43,7 +43,7 @@ asyncio.run(main())
 
 ## Getting Started
 
-Read the [documentation](https://seria.is-a.dev/yatta) to learn more about on how to use this wrapper.
+Read the [documentation](https://gh.seria.moe/yatta) to learn more about on how to use this wrapper.
 
 ## Questions, Issues, Feedback, Contributions
 

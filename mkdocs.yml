@@ -1,6 +1,6 @@
 # Project information
 site_name: yatta
-site_url: https://seria.is-a.dev/yatta
+site_url: https://gh.seria.moe/yatta
 site_author: Seria Ati
 site_description: An async API wrapper for Project Yatta (sr.yatta.moe) written in Python.
 
