@@ -20,7 +20,7 @@ Repository = "https://github.com/seriaati/yatta.git"
 Issues = "https://github.com/seriaati/yatta/issues"
 
 [project.optional-dependencies]
-docs = ["mkdocs-material>=9.6.11", "mkdocstrings[python]>=0.29.1"]
+docs = ["mkdocs-material[imaging]>=9.6.11", "mkdocstrings[python]>=0.29.1"]
 
 [build-system]
 requires = ["hatchling"]
