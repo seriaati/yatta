@@ -18,6 +18,7 @@ license = { file = "LICENSE" }
 Homepage = "https://github.com/seriaati/yatta"
 Repository = "https://github.com/seriaati/yatta.git"
 Issues = "https://github.com/seriaati/yatta/issues"
+Documentation = "https://gh.seria.moe/yatta"
 
 [project.optional-dependencies]
 docs = ["mkdocs-material[imaging]>=9.6.11", "mkdocstrings[python]>=0.29.1"]
