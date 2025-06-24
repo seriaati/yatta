@@ -517,7 +517,7 @@ class VoiceActor(BaseModel):
     """
 
     lang: str
-    name: str
+    name: str | None
 
 
 class CharacterInfo(BaseModel):
