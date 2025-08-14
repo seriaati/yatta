@@ -41,8 +41,8 @@ class Changelog(BaseModel):
 
     @field_validator("version", mode="before")
     @classmethod
-    def _coerce_version(cls, v):
-        return str(v) if v is not None else ""
+    def __coerce_version(cls, v: str | int) -> str:
+        return str(v)
 
     @field_validator("categories", mode="before")
     @classmethod

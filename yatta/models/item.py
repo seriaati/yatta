@@ -126,9 +126,7 @@ class ItemDetail(BaseModel):
 
     @field_validator("tags", mode="before")
     @classmethod
-    def _coerce_tags(cls, v):
-        if v is None:
-            return []
+    def __coerce_tags(cls, v: list[str | int]) -> list[str]:
         return [str(tag) for tag in v]
 
     @field_validator("icon", mode="before")
@@ -167,9 +165,7 @@ class Item(BaseModel):
 
     @field_validator("tags", mode="before")
     @classmethod
-    def _coerce_tags(cls, v):
-        if v is None:
-            return []
+    def __coerce_tags(cls, v: list[str | int]) -> list[str]:
         return [str(tag) for tag in v]
 
     @field_validator("icon", mode="before")
