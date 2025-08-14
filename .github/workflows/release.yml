@@ -2,7 +2,7 @@ name: Create Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   create-release:
@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-        
+
       - name: Create release
         uses: seriaati/create-release@main
         with:
