@@ -38,7 +38,7 @@ class Changelog(BaseModel):
     version: str
     categories: list[ChangelogCategory] = Field(alias="items")
     beta: bool = Field(False)
-    
+
     @field_validator("version", mode="before")
     @classmethod
     def _coerce_version(cls, v):

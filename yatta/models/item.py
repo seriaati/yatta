@@ -123,7 +123,7 @@ class ItemDetail(BaseModel):
     description: str
     story: str | None
     sources: list[ItemSource] = Field(alias="source")
-    
+
     @field_validator("tags", mode="before")
     @classmethod
     def _coerce_tags(cls, v):
@@ -164,7 +164,7 @@ class Item(BaseModel):
     tags: list[str]
     icon: str
     route: str
-    
+
     @field_validator("tags", mode="before")
     @classmethod
     def _coerce_tags(cls, v):
