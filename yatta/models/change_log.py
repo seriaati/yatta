@@ -39,6 +39,11 @@ class Changelog(BaseModel):
     categories: list[ChangelogCategory] = Field(alias="items")
     beta: bool = Field(False)
 
+    @field_validator("version", mode="before")
+    @classmethod
+    def __coerce_version(cls, v: str | int) -> str:
+        return str(v)
+
     @field_validator("categories", mode="before")
     @classmethod
     def __convert_categories(cls, v: dict[str, list[int]]) -> list[ChangelogCategory]:

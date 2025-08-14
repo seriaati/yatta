@@ -124,6 +124,11 @@ class ItemDetail(BaseModel):
     story: str | None
     sources: list[ItemSource] = Field(alias="source")
 
+    @field_validator("tags", mode="before")
+    @classmethod
+    def __coerce_tags(cls, v: list[str | int]) -> list[str]:
+        return [str(tag) for tag in v]
+
     @field_validator("icon", mode="before")
     @classmethod
     def __convert_icon(cls, v: str) -> str:
@@ -157,6 +162,11 @@ class Item(BaseModel):
     tags: list[str]
     icon: str
     route: str
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def __coerce_tags(cls, v: list[str | int]) -> list[str]:
+        return [str(tag) for tag in v]
 
     @field_validator("icon", mode="before")
     @classmethod
