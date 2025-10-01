@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import pathlib
 import time
 from typing import TYPE_CHECKING, Any, Final, Self
 
 import aiofiles
+import anyio
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from loguru import logger
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 __all__ = ("YattaAPI",)
 
-CACHE_PATH = pathlib.Path("./.cache/yatta")
+CACHE_PATH = anyio.Path("./.cache/yatta")
 
 
 class YattaAPI:
@@ -393,7 +393,7 @@ class YattaAPI:
         return data["data"]
 
     async def _save_version(self, version: str) -> None:
-        CACHE_PATH.mkdir(parents=True, exist_ok=True)
+        await CACHE_PATH.mkdir(parents=True, exist_ok=True)
         async with aiofiles.open(CACHE_PATH / "version.txt", "w") as f:
             await f.write(f"{version},{time.time()}")
 
