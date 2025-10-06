@@ -29,6 +29,7 @@ from .models import (
 
 if TYPE_CHECKING:
     import aiohttp
+    from aiohttp_client_cache import CacheBackend
 
 __all__ = ("YattaAPI",)
 
@@ -47,6 +48,8 @@ class YattaAPI:
         headers: Optional dictionary of headers to include in requests.
         session: Optional existing aiohttp.ClientSession to use. If None, a new
                  CachedSession will be created.
+        cache_backend: Optional CacheBackend instance for caching. If None,
+                       a SQLite backend will be used with a default path.
     """
 
     BASE_URL: Final[str] = "https://sr.yatta.moe/api/v2"
@@ -58,12 +61,15 @@ class YattaAPI:
         cache_ttl: int = 3600,
         headers: dict[str, Any] | None = None,
         session: aiohttp.ClientSession | None = None,
+        cache_backend: CacheBackend | None = None,
     ) -> None:
         self.lang = lang
         self.cache_ttl = cache_ttl
 
         self._session = session
-        self._cache = SQLiteBackend("./.cache/yatta/aiohttp-cache.db", expire_after=cache_ttl)
+        self._cache = cache_backend or SQLiteBackend(
+            "./.cache/yatta/aiohttp-cache.db", expire_after=cache_ttl
+        )
         self._headers = headers or {"User-Agent": "yatta-py"}
 
     async def __aenter__(self) -> Self:
