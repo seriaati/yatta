@@ -66,6 +66,7 @@ class YattaAPI:
         self.lang = lang
         self.cache_ttl = cache_ttl
 
+        self._using_custom_session = session is not None
         self._session = session
         self._cache = cache_backend or SQLiteBackend(
             "./.cache/yatta/aiohttp-cache.db", expire_after=cache_ttl
@@ -163,7 +164,7 @@ class YattaAPI:
 
         Should be called to release resources if not using `async with`.
         """
-        if self._session is not None:
+        if self._session is not None and not self._using_custom_session:
             await self._session.close()
 
     async def fetch_books(self, use_cache: bool = True) -> list[Book]:
