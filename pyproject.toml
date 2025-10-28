@@ -23,7 +23,7 @@ Documentation = "https://gh.seria.moe/yatta"
 
 [dependency-groups]
 test = ["pytest>=8.4.2", "pytest-asyncio>=1.2.0"]
-docs = ["mkdocs-material[imaging]>=9.6.11", "mkdocstrings[python]>=0.29.1"]
+docs = ["mkdocs-material>=9.6.11", "mkdocstrings[python]>=0.29.1", "griffe-pydantic>=1.1.7"]
 
 [build-system]
 requires = ["uv_build>=0.9.0,<0.10.0"]
