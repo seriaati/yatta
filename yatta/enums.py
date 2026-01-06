@@ -55,6 +55,8 @@ class PathType(StrEnum):
     """Abundance"""
     MEMORY = "Memory"
     """Remembrance"""
+    ELATION = "Elation"
+    """Elation"""
 
 
 class CombatType(StrEnum):
