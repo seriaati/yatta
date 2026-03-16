@@ -48,7 +48,7 @@ class BookDetail(BaseModel):
     world_type: str = Field(alias="worldType")
     chapter_count: int = Field(0)
     icon: str
-    description: str
+    description: str | None = None
     series: list[BookSeries]
 
     @field_validator("icon", mode="before")
