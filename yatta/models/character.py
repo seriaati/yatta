@@ -622,17 +622,17 @@ class CharacterDetail(BaseModel):
 
     @property
     def medium_icon(self) -> str:
-        """Return the URL to the medium-sized avatar icon."""
+        """The URL to the medium-sized avatar icon."""
         return self.icon.replace("avatar", "avatar/medium")
 
     @property
     def large_icon(self) -> str:
-        """Return the URL to the large-sized avatar icon (full splash art)."""
+        """The URL to the large-sized avatar icon (full splash art)."""
         return self.icon.replace("avatar", "avatar/large")
 
     @property
     def round_icon(self) -> str:
-        """Return the URL to the round avatar icon."""
+        """The URL to the round avatar icon."""
         return self.icon.replace("avatar", "avatar/round")
 
 
@@ -683,15 +683,15 @@ class Character(BaseModel):
 
     @property
     def medium_icon(self) -> str:
-        """Return the URL to the medium-sized avatar icon."""
+        """The URL to the medium-sized avatar icon."""
         return self.icon.replace("avatar", "avatar/medium")
 
     @property
     def large_icon(self) -> str:
-        """Return the URL to the large-sized avatar icon (full splash art)."""
+        """The URL to the large-sized avatar icon (full splash art)."""
         return self.icon.replace("avatar", "avatar/large")
 
     @property
     def round_icon(self) -> str:
-        """Return the URL to the round avatar icon."""
+        """The URL to the round avatar icon."""
         return self.icon.replace("avatar", "avatar/round")

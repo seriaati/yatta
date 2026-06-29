@@ -13,7 +13,7 @@ class BaseModel(_BaseModel):
 
     @property
     def fields(self) -> dict[str, Any]:
-        """Return all fields of the model as a dictionary."""
+        """All fields of the model as a dictionary."""
         schema = BaseModel.model_fields
         field_names = schema.keys()
         return {name: getattr(self, name) for name in field_names}
