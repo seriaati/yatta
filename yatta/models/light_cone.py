@@ -161,12 +161,12 @@ class LightConeDetail(BaseModel):
 
     @property
     def medium_icon(self) -> str:
-        """Return the URL to the medium-sized icon."""
+        """The URL to the medium-sized icon."""
         return self.icon.replace("equipment", "equipment/medium")
 
     @property
     def large_icon(self) -> str:
-        """Return the URL to the large-sized icon."""
+        """The URL to the large-sized icon."""
         return self.icon.replace("equipment", "equipment/large")
 
 
@@ -205,10 +205,10 @@ class LightCone(BaseModel):
 
     @property
     def medium_icon(self) -> str:
-        """Return the URL to the medium-sized icon."""
+        """The URL to the medium-sized icon."""
         return self.icon.replace("equipment", "equipment/medium")
 
     @property
     def large_icon(self) -> str:
-        """Return the URL to the large-sized icon."""
+        """The URL to the large-sized icon."""
         return self.icon.replace("equipment", "equipment/large")
