@@ -1488,6 +1488,13 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+dev = [
+    { name = "griffe-pydantic" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
 docs = [
     { name = "griffe-pydantic" },
     { name = "mkdocs-material" },
@@ -1509,6 +1516,13 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+dev = [
+    { name = "griffe-pydantic", specifier = ">=1.1.7" },
+    { name = "mkdocs-material", specifier = ">=9.6.11" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.29.1" },
+    { name = "pytest", specifier = ">=8.4.2" },
+    { name = "pytest-asyncio", specifier = ">=1.2.0" },
+]
 docs = [
     { name = "griffe-pydantic", specifier = ">=1.1.7" },
     { name = "mkdocs-material", specifier = ">=9.6.11" },
