@@ -181,7 +181,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("book", use_cache=use_cache)
-        return [Book(**b) for b in data["data"]["items"].values()]
+        return [Book(**b) for b in data["data"]["items"].values() if b.get("route")]
 
     async def fetch_book_detail(self, id: int, use_cache: bool = True) -> BookDetail:
         """Fetch detailed information for a specific book.
@@ -214,7 +214,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("avatar", use_cache=use_cache)
-        return [Character(**c) for c in data["data"]["items"].values()]
+        return [Character(**c) for c in data["data"]["items"].values() if c.get("route")]
 
     async def fetch_character_detail(self, id: int, use_cache: bool = True) -> CharacterDetail:
         """Fetch detailed information for a specific character.
@@ -247,7 +247,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("item", use_cache=use_cache)
-        return [Item(**i) for i in data["data"]["items"].values()]
+        return [Item(**i) for i in data["data"]["items"].values() if i.get("route")]
 
     async def fetch_item_detail(self, id: int, use_cache: bool = True) -> ItemDetail:
         """Fetch detailed information for a specific item.
@@ -280,7 +280,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("equipment", use_cache=use_cache)
-        return [LightCone(**lc) for lc in data["data"]["items"].values()]
+        return [LightCone(**lc) for lc in data["data"]["items"].values() if lc.get("route")]
 
     async def fetch_light_cone_detail(self, id: int, use_cache: bool = True) -> LightConeDetail:
         """Fetch detailed information for a specific light cone.
@@ -313,7 +313,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("message", use_cache=use_cache)
-        return [Message(**m) for m in data["data"]["items"].values()]
+        return [Message(**m) for m in data["data"]["items"].values() if m.get("route")]
 
     async def fetch_message_types(self, use_cache: bool = True) -> dict[str, str]:
         """Fetch a mapping of message type IDs to their names.
@@ -345,7 +345,7 @@ class YattaAPI:
             YattaAPIError: For other API errors.
         """
         data = await self._request("relic", use_cache=use_cache)
-        return [RelicSet(**r) for r in data["data"]["items"].values()]
+        return [RelicSet(**r) for r in data["data"]["items"].values() if r.get("route")]
 
     async def fetch_relic_set_detail(self, id: int, use_cache: bool = True) -> RelicSetDetail:
         """Fetch detailed information for a specific relic set.
