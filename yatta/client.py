@@ -77,7 +77,7 @@ class YattaAPI:
         await self.start()
         return self
 
-    async def __aexit__(self, exc_type, exc, tb) -> None:  # noqa: ANN001
+    async def __aexit__(self, exc_type, exc, tb) -> None:  # ruff: ignore[missing-type-function-argument]
         await self.close()
 
     async def _request(
