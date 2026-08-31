@@ -34,9 +34,11 @@ pip install yatta-py
 import yatta
 import asyncio
 
+
 async def main() -> None:
     async with yatta.YattaAPI(yatta.Language.CHT) as client:
         await client.fetch_characters()
+
 
 asyncio.run(main())
 ```
