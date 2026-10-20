@@ -4,7 +4,7 @@
 
 yatta-py is an async API wrapper for [Project Yatta](https://sr.yatta.moe/) written in Python.  
 Project Yatta is a beautiful website that displays Honkai: Star Rail game data.  
-Developing something for Hoyoverse games? You might be interested in [other API wrappers](https://github.com/seriaati#api-wrappers) written by me.
+Developing something for Hoyoverse games? You might be interested in [other API wrappers](https://projects.seria.moe/projects/#wrapper) written by me.
 
 > Note: I am not the developer of Project Yatta.
 
